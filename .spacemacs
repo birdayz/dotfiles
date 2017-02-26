@@ -312,6 +312,15 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;;(setq kill-emacs-hook)
   (setq persp-auto-save-opt 0)
 
+  ;; UTF8!
+  (set-language-environment 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (setq locale-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+ 
+
   (global-set-key (kbd "<f1>") 'helm-find-files)
   (global-set-key (kbd "<f2>") 'helm-mini)
   (global-set-key (kbd "<f4>") 'helm-semantic-or-imenu)
