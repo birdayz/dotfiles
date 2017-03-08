@@ -73,3 +73,4 @@ source $HOME/app/git-subrepo/.rc
 alias vi=nvim
 EDITOR=nvim
 VISUAL=nvim
+PATH=$PATH:$HOME/bin
