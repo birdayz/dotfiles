@@ -1,5 +1,5 @@
 ZSH_THEME="powerlevel9k/powerlevel9k"
-plugins=(vi-mode git command-not-found encode64 history sudo wd)
+plugins=(git command-not-found encode64 history sudo wd)
 
 # User configuration
 source $ZSH/oh-my-zsh.sh
