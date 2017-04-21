@@ -1,7 +1,4 @@
-# This is Git's per-user configuration file.
 [user]
-# Please adapt and uncomment the following lines:
-	name = Johannes Brüderl
-	email = johannes.bruederl@gmail.com
+	useConfigOnly = true
 [push]
 	default = simple
