@@ -7,5 +7,5 @@ export SPRING_HOME=$HOME/app/springboot/spring-1.5.2.RELEASE
 export JAVA_HOME=$HOME/app/jdk/jdk1.8.0_121
 export M2_HOME=/opt/maven
 export WLAN_INTERFACE="wlp4s0"
-export PATH=$HOME/bin:GOPATH/bin:$GOROOT/bin:$GOPATH/bin:$SPRING_HOME/bin:$JAVA_HOME/bin:$M2_HOME/bin:$PATH
+export PATH=$HOME/bin:$GOPATH/bin:$GOROOT/bin:$GOPATH/bin:$SPRING_HOME/bin:$JAVA_HOME/bin:$M2_HOME/bin:$PATH
 export LC_ALL=en_US.UTF-8
