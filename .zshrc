@@ -20,3 +20,5 @@ SAVEHIST=$HISTSIZE
 if [[ -d $HOME/app/git-subrepo ]]; then
 	source $HOME/app/git-subrepo/.rc
 fi
+
+export PATH=$HOME/bin:$GOPATH/bin:$GOROOT/bin:$GOPATH/bin:$SPRING_HOME/bin:$JAVA_HOME/bin:$M2_HOME/bin:$PATH
