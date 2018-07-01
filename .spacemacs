@@ -32,7 +32,6 @@ values."
    dotspacemacs-configuration-layers
    '(python
      lua
-     '((c-c++ :variables c-c++-enable-clang-support t))
      c-c++
      docker
      html
@@ -45,11 +44,6 @@ values."
      shell-scripts
      rust
      yaml
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
      helm
      go
      react
@@ -58,11 +52,6 @@ values."
      emacs-lisp
      git
      markdown
-     (org :variables
-          org-enable-reveal-js-support t)
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
      spell-checking
      syntax-checking
      version-control
@@ -328,8 +317,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (setq neo-theme 'arrow)
   ;;(setq kill-emacs-hook)
   (setq persp-auto-save-opt 0)
-  (setq-default dotspacemacs-configuration-layers
-                '((org :variables org-enable-reveal-js-support t)))
 
   (defun xmllint-format ()
     "Format an XML buffer with `xmllint'."
