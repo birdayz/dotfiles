@@ -395,6 +395,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (global-set-key (kbd "<f2>") 'helm-mini)
   (global-set-key (kbd "<f4>") 'helm-semantic-or-imenu)
   (global-set-key (kbd "<f5>") 'helm-resume)
+  (global-set-key (kbd "<f6>") 'neotree-toggle)
   (defun xml-format ()
     (interactive)
     (save-excursion
