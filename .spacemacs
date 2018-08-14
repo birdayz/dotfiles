@@ -366,6 +366,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 (defun dotspacemacs/user-config ()
   (setq powerline-default-separator 'arrow)
   (setq gofmt-command "goimports")
+  (setq go-format-before-save t)
   (setq scroll-preserve-screen-position t)
   ;;(setq neo-vc-integration 'face)
   (setq neo-theme 'arrow)
