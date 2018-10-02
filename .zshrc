@@ -31,3 +31,7 @@ alias k=kubectl
 alias win='exec VBoxManage startvm "crap"'
 
 export PATH=$PATH:$HOME/.gem/ruby/2.4.0/bin:/opt/google-cloud-sdk/platform/google_appengine/:/opt/ccloud-0.2.1/bin/
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/j0e/.sdkman"
+[[ -s "/home/j0e/.sdkman/bin/sdkman-init.sh" ]] && source "/home/j0e/.sdkman/bin/sdkman-init.sh"
