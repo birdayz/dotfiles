@@ -400,6 +400,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (global-set-key (kbd "<f4>") 'helm-semantic-or-imenu)
   (global-set-key (kbd "<f5>") 'helm-resume)
   (global-set-key (kbd "<f6>") 'treemacs)
+  (global-set-key (kbd "<f7>") 'ag-project)
   (defun xml-format ()
     (interactive)
     (save-excursion
