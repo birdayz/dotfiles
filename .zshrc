@@ -2,8 +2,12 @@ export ZSH=/home/j0e/.oh-my-zsh
 ZSH_THEME="powerlevel9k/powerlevel9k"
 plugins=(git command-not-found encode64 history sudo wd)
 
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
 # User configuration
-source $ZSH/oh-my-zsh.sh
+#source $ZSH/oh-my-zsh.sh
 
 # ZSH stuff
 bindkey "^[[5~" history-beginning-search-backward
@@ -35,3 +39,5 @@ export PATH=$PATH:$HOME/.gem/ruby/2.4.0/bin:/opt/google-cloud-sdk/platform/googl
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/j0e/.sdkman"
 [[ -s "/home/j0e/.sdkman/bin/sdkman-init.sh" ]] && source "/home/j0e/.sdkman/bin/sdkman-init.sh"
+
+. $HOME/.fzf.zsh
