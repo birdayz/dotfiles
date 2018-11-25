@@ -397,11 +397,12 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (global-set-key (kbd "<f1>") 'helm-find-files)
   (global-set-key (kbd "<f2>") 'helm-mini)
+  (global-set-key (kbd "<f3>") 'counsel-fzf)
   (global-set-key (kbd "<f4>") 'counsel-imenu)
   (global-set-key (kbd "<f5>") 'counsel-rg)
   (global-set-key (kbd "<f6>") 'treemacs)
   (global-set-key (kbd "<f7>") 'counsel-ag)
-  (global-set-key (kbd "<f3>") 'counsel-fzf)
+  (global-set-key (kbd "<f8>") 'swiper)
   (defun xml-format ()
     (interactive)
     (save-excursion
