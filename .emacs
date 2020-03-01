@@ -16,6 +16,7 @@
 (straight-use-package 'evil)
 (straight-use-package 'k8s-mode)
 (straight-use-package 'lsp-mode)
+(straight-use-package 'lsp-ivy)
 (straight-use-package 'go-mode)
 (straight-use-package 'go-complete)
 (straight-use-package 'spaceline)
@@ -97,3 +98,14 @@
 (add-hook 'completion-at-point-functions 'go-complete-at-point)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
+
+;; dashboard
+(setq dashboard-items '((recents  . 5)
+                        (bookmarks . 5)
+                        (projects . 5)
+                        (agenda . 5)
+                        (registers . 5)))
+
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
