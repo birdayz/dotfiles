@@ -18,8 +18,8 @@
 (straight-use-package 'lsp-mode)
 (straight-use-package 'lsp-ivy)
 (straight-use-package 'go-mode)
+(straight-use-package 'godoctor)
 (straight-use-package 'go-complete)
-(straight-use-package 'spaceline)
 (straight-use-package 'company)
 (straight-use-package 'magit)
 (straight-use-package 'flycheck)
@@ -41,6 +41,12 @@
 (straight-use-package 'dashboard)
 (straight-use-package 'company-box)
 (straight-use-package 'company-posframe)
+(straight-use-package 'monokai-theme)
+(straight-use-package 'doom-modeline)
+(straight-use-package 'yascroll)
+(straight-use-package 'dockerfile-mode)
+(straight-use-package 'ace-window)
+(straight-use-package 'doom-themes)
 
 ;; hotkeys
 (global-set-key "\C-s" 'swiper)
@@ -65,9 +71,9 @@
 
 ;; general
 (set-frame-font "Source Code Pro 10" nil t)
-(load-theme 'cyberpunk t)
-(require 'spaceline)
-(spaceline-emacs-theme)
+(global-yascroll-bar-mode 1)
+(require 'doom-modeline)
+(doom-modeline-mode 1)
 
 ;; tuning
 (setq gc-cons-threshold 1000000000)
@@ -80,6 +86,7 @@
 ;; other
 (require 'evil)
 (evil-mode 1)
+(define-key evil-normal-state-map "m" 'ace-window)
 (require 'company-box)
 (add-hook 'company-mode-hook 'company-box-mode)
 (require 'dashboard)
@@ -109,3 +116,12 @@
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+
+
+(add-hook 'before-save-hook #'lsp-format-buffer)
+(add-hook 'before-save-hook #'lsp-organize-imports)
+
+(setq org-agenda-files '("~/Documents/agenda/"))
+(ace-window-display-mode 1)
+(toggle-scroll-bar -1)
+(load-theme 'doom-one t)
