@@ -47,6 +47,14 @@
 (straight-use-package 'dockerfile-mode)
 (straight-use-package 'ace-window)
 (straight-use-package 'doom-themes)
+(straight-use-package 'imenu-list)
+(straight-use-package 'prescient)
+(straight-use-package 'ivy-prescient)
+(straight-use-package 'company-prescient)
+(straight-use-package 'expand-region)
+(straight-use-package 'alect-themes)
+(straight-use-package 'kaolin-themes)
+
 
 ;; hotkeys
 (global-set-key "\C-s" 'swiper)
@@ -60,7 +68,7 @@
 (global-set-key (kbd "C-x l") 'counsel-locate)
 (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
 (global-set-key (kbd "<f1>") 'counsel-find-file)
-(global-set-key (kbd "<f2>") 'counsel-recentf)
+(global-set-key (kbd "<f2>") 'counsel-buffer-or-recentf)
 (global-set-key (kbd "<f3>") 'fzf-git)
 (global-set-key (kbd "<f4>") 'counsel-imenu)
 (global-set-key (kbd "<f5>") 'counsel-rg)
@@ -124,4 +132,6 @@
 (setq org-agenda-files '("~/Documents/agenda/"))
 (ace-window-display-mode 1)
 (toggle-scroll-bar -1)
-(load-theme 'doom-one t)
+(load-theme 'kaolin-aurora t)
+(global-linum-mode 1)
+(global-hl-line-mode 1)
