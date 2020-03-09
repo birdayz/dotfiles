@@ -54,6 +54,7 @@
 (straight-use-package 'expand-region)
 (straight-use-package 'alect-themes)
 (straight-use-package 'kaolin-themes)
+(straight-use-package 'calc)
 
 
 ;; hotkeys
@@ -130,8 +131,11 @@
 (add-hook 'before-save-hook #'lsp-organize-imports)
 
 (setq org-agenda-files '("~/Documents/agenda/"))
+(setq lsp-enable-file-watchers t)
+(setq lsp-file-watch-threshold 10000)
 (ace-window-display-mode 1)
 (toggle-scroll-bar -1)
 (load-theme 'kaolin-aurora t)
 (global-linum-mode 1)
 (global-hl-line-mode 1)
+(add-hook 'go-mode-hook #'lsp)
