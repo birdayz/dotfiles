@@ -55,6 +55,26 @@
 (straight-use-package 'alect-themes)
 (straight-use-package 'kaolin-themes)
 (straight-use-package 'calc)
+(straight-use-package 'mermaid-mode)
+(straight-use-package 'format-all)
+(straight-use-package 'protobuf-mode)
+(straight-use-package 'json-mode)
+(straight-use-package 'dap-mode)
+(straight-use-package 'use-package)
+(straight-use-package
+ '(emacs-livedown :type git :host github :repo "shime/emacs-livedown"
+            ))
+;; (straight-use-package 'all-the-icons)
+;; (use-package all-the-icons-ivy-rich
+;;   :ensure t
+;;   :straight t
+;;   :init (all-the-icons-ivy-rich-mode 1))
+
+;; (use-package ivy-rich
+;;   :ensure t
+;;   :straight t
+;;   :init (ivy-rich-mode 1))
+
 
 
 ;; hotkeys
@@ -71,7 +91,7 @@
 (global-set-key (kbd "<f1>") 'counsel-find-file)
 (global-set-key (kbd "<f2>") 'counsel-buffer-or-recentf)
 (global-set-key (kbd "<f3>") 'fzf-git)
-(global-set-key (kbd "<f4>") 'counsel-imenu)
+(global-set-key (kbd "<f4>") 'lsp-ui-imenu)
 (global-set-key (kbd "<f5>") 'counsel-rg)
 (global-set-key (kbd "<f8>") 'imenu-list-smart-toggle)
 (global-set-key (kbd "<f7>") 'counsel-bookmark)
@@ -139,3 +159,74 @@
 (global-linum-mode 1)
 (global-hl-line-mode 1)
 (add-hook 'go-mode-hook #'lsp)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#2b303b" "#BF616A" "#A3BE8C" "#ECBE7B" "#8FA1B3" "#c678dd" "#46D9FF" "#c0c5ce"])
+ '(compilation-message-face 'default)
+ '(custom-safe-themes
+   '("0eb3c0868ff890b0c4ee138069ce2a8936a8a69ba150efa6bfb9fb7c05af5ec3" "d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" default))
+ '(fci-rule-color "#65737E")
+ '(highlight-changes-colors '("#FD5FF0" "#AE81FF"))
+ '(highlight-tail-colors
+   '(("#3C3D37" . 0)
+     ("#679A01" . 20)
+     ("#4BBEAE" . 30)
+     ("#1DB4D0" . 50)
+     ("#9A8F21" . 60)
+     ("#A75B00" . 70)
+     ("#F309DF" . 85)
+     ("#3C3D37" . 100)))
+ '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#D08770"))
+ '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#A3BE8C"))
+ '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#4f5b66"))
+ '(magit-diff-use-overlays nil)
+ '(objed-cursor-color "#BF616A")
+ '(pdf-view-midnight-colors (cons "#c0c5ce" "#2b303b"))
+ '(pos-tip-background-color "#FFFACE")
+ '(pos-tip-foreground-color "#272822")
+ '(rustic-ansi-faces
+   ["#2b303b" "#BF616A" "#A3BE8C" "#ECBE7B" "#8FA1B3" "#c678dd" "#46D9FF" "#c0c5ce"])
+ '(vc-annotate-background "#2b303b")
+ '(vc-annotate-color-map
+   (list
+    (cons 20 "#A3BE8C")
+    (cons 40 "#bbbe86")
+    (cons 60 "#d3be80")
+    (cons 80 "#ECBE7B")
+    (cons 100 "#e2ab77")
+    (cons 120 "#d99973")
+    (cons 140 "#D08770")
+    (cons 160 "#cc8294")
+    (cons 180 "#c97db8")
+    (cons 200 "#c678dd")
+    (cons 220 "#c370b6")
+    (cons 240 "#c16890")
+    (cons 260 "#BF616A")
+    (cons 280 "#a35f69")
+    (cons 300 "#875e68")
+    (cons 320 "#6b5c67")
+    (cons 340 "#65737E")
+    (cons 360 "#65737E")))
+ '(vc-annotate-very-old-color nil)
+ '(weechat-color-list
+   '(unspecified "#272822" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0")))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+(setq company-idle-delay 0)
+(setq company-minimum-prefix-length 1)
+
+(add-hook 'java-mode-hook #'lsp)
+
+(setq lsp-java-format-settings-url "https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml")
+(setq lsp-vetur-server-command "/usr/bin/vls")
+
+recentf-mode
