@@ -155,7 +155,7 @@
 (setq lsp-file-watch-threshold 10000)
 (ace-window-display-mode 1)
 (toggle-scroll-bar -1)
-(load-theme 'kaolin-aurora t)
+(load-theme 'doom-one t)
 (global-linum-mode 1)
 (global-hl-line-mode 1)
 (add-hook 'go-mode-hook #'lsp)
@@ -168,7 +168,7 @@
    ["#2b303b" "#BF616A" "#A3BE8C" "#ECBE7B" "#8FA1B3" "#c678dd" "#46D9FF" "#c0c5ce"])
  '(compilation-message-face 'default)
  '(custom-safe-themes
-   '("0eb3c0868ff890b0c4ee138069ce2a8936a8a69ba150efa6bfb9fb7c05af5ec3" "d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" default))
+   '("e1ecb0536abec692b5a5e845067d75273fe36f24d01210bf0aa5842f2a7e029f" "a339f231e63aab2a17740e5b3965469e8c0b85eccdfb1f9dbd58a30bdad8562b" "0eb3c0868ff890b0c4ee138069ce2a8936a8a69ba150efa6bfb9fb7c05af5ec3" "d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" default))
  '(fci-rule-color "#65737E")
  '(highlight-changes-colors '("#FD5FF0" "#AE81FF"))
  '(highlight-tail-colors
@@ -230,3 +230,11 @@
 (setq lsp-vetur-server-command "/usr/bin/vls")
 
 recentf-mode
+
+(setq backup-directory-alist `(("." . "~/.saves")))
+(setq backup-by-copying t)
+
+(setq delete-old-versions t
+  kept-new-versions 6
+  kept-old-versions 2
+  version-control t)
