@@ -185,6 +185,7 @@
  '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#4f5b66"))
  '(magit-diff-use-overlays nil)
  '(objed-cursor-color "#BF616A")
+ '(org-agenda-files nil)
  '(pdf-view-midnight-colors (cons "#c0c5ce" "#2b303b"))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
@@ -229,7 +230,9 @@
 (setq lsp-java-format-settings-url "https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml")
 (setq lsp-vetur-server-command "/usr/bin/vls")
 
-recentf-mode
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(setq recentf-max-saved-items 25)
 
 (setq backup-directory-alist `(("." . "~/.saves")))
 (setq backup-by-copying t)
@@ -238,3 +241,7 @@ recentf-mode
   kept-new-versions 6
   kept-old-versions 2
   version-control t)
+
+(lsp-register-custom-settings
+ '(("gopls.completeUnimported" t t)
+   ("gopls.staticcheck" t t)))
