@@ -60,6 +60,7 @@
 (straight-use-package 'protobuf-mode)
 (straight-use-package 'json-mode)
 (straight-use-package 'dap-mode)
+(straight-use-package 'undo-fu)
 (straight-use-package 'use-package)
 (straight-use-package
  '(emacs-livedown :type git :host github :repo "shime/emacs-livedown"
@@ -231,8 +232,6 @@
 (setq lsp-vetur-server-command "/usr/bin/vls")
 
 (recentf-mode 1)
-(setq recentf-max-menu-items 25)
-(setq recentf-max-saved-items 25)
 
 (setq backup-directory-alist `(("." . "~/.saves")))
 (setq backup-by-copying t)
@@ -245,3 +244,8 @@
 (lsp-register-custom-settings
  '(("gopls.completeUnimported" t t)
    ("gopls.staticcheck" t t)))
+
+(global-undo-tree-mode -1)
+
+(define-key evil-normal-state-map (kbd "u") 'undo-fu-only-undo)
+(define-key evil-normal-state-map (kbd "C-r") 'undo-fu-only-redo)
