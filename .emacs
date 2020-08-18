@@ -56,11 +56,17 @@
 (straight-use-package 'kaolin-themes)
 (straight-use-package 'calc)
 (straight-use-package 'mermaid-mode)
+(straight-use-package 'dap-mode)
 (straight-use-package 'format-all)
 (straight-use-package 'protobuf-mode)
 (straight-use-package 'json-mode)
 (straight-use-package 'dap-mode)
 (straight-use-package 'undo-fu)
+(straight-use-package 'yasnippet)
+(straight-use-package 'hydra)
+(straight-use-package 'helm)
+(straight-use-package 'helm-lsp)
+(straight-use-package 'yasnippet)
 (straight-use-package 'use-package)
 (straight-use-package
  '(emacs-livedown :type git :host github :repo "shime/emacs-livedown"
@@ -108,10 +114,8 @@
 ;; tuning
 (setq gc-cons-threshold 1000000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
-(setq lsp-idle-delay 0.100)
 (setq lsp-prefer-capf t)
-(setq lsp-idle-delay 0.0500)
+(setq lsp-idle-delay 0.500)
 
 ;; other
 (require 'evil)
@@ -169,7 +173,7 @@
    ["#2b303b" "#BF616A" "#A3BE8C" "#ECBE7B" "#8FA1B3" "#c678dd" "#46D9FF" "#c0c5ce"])
  '(compilation-message-face 'default)
  '(custom-safe-themes
-   '("e1ecb0536abec692b5a5e845067d75273fe36f24d01210bf0aa5842f2a7e029f" "a339f231e63aab2a17740e5b3965469e8c0b85eccdfb1f9dbd58a30bdad8562b" "0eb3c0868ff890b0c4ee138069ce2a8936a8a69ba150efa6bfb9fb7c05af5ec3" "d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" default))
+   '("643b4d181b6afa4306d65db76889d8b987e095ae8f262a4c71dd5669d39c9b09" "8ce796252a78d1a69e008c39d7b84a9545022b64609caac98dc7980d76ae34e3" "e1ecb0536abec692b5a5e845067d75273fe36f24d01210bf0aa5842f2a7e029f" "a339f231e63aab2a17740e5b3965469e8c0b85eccdfb1f9dbd58a30bdad8562b" "0eb3c0868ff890b0c4ee138069ce2a8936a8a69ba150efa6bfb9fb7c05af5ec3" "d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" default))
  '(fci-rule-color "#65737E")
  '(highlight-changes-colors '("#FD5FF0" "#AE81FF"))
  '(highlight-tail-colors
@@ -249,3 +253,15 @@
 
 (define-key evil-normal-state-map (kbd "u") 'undo-fu-only-undo)
 (define-key evil-normal-state-map (kbd "C-r") 'undo-fu-only-redo)
+
+;; LSP-java settings
+(setq lsp-java-java-path "/usr/lib/jvm/java-11-openjdk/bin/java")
+;;(setq c-basic-offset 2)
+(setq lsp-java-import-gradle-wrapper-enabled t)
+
+(add-hook 'java-mode-hook (defun my-set-java-tab-width () (setq tab-width 2)))
+(setq lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml")
+(setq lsp-java-format-settings-profile "GoogleStyle")
+(setq lsp-enable-file-watchers nil)
+
+(setq lsp-keep-workspace-alive nil)
