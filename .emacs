@@ -62,12 +62,16 @@
 (straight-use-package 'json-mode)
 (straight-use-package 'dap-mode)
 (straight-use-package 'undo-fu)
-(straight-use-package 'yasnippet)
 (straight-use-package 'hydra)
 (straight-use-package 'helm)
 (straight-use-package 'helm-lsp)
+(straight-use-package
+ '(helm-fzf :type git :host github :repo "ibmandura/helm-fzf"
+            ))
+
 (straight-use-package 'yasnippet)
 (straight-use-package 'use-package)
+(straight-use-package 'evil-collection)
 (straight-use-package
  '(emacs-livedown :type git :host github :repo "shime/emacs-livedown"
             ))
@@ -95,10 +99,10 @@
 (global-set-key (kbd "C-c k") 'counsel-ag)
 (global-set-key (kbd "C-x l") 'counsel-locate)
 (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-(global-set-key (kbd "<f1>") 'counsel-find-file)
-(global-set-key (kbd "<f2>") 'counsel-buffer-or-recentf)
+(global-set-key (kbd "<f1>") 'helm-find-files)
+(global-set-key (kbd "<f2>") 'helm-mini)
 (global-set-key (kbd "<f3>") 'fzf-git)
-(global-set-key (kbd "<f4>") 'lsp-ui-imenu)
+(global-set-key (kbd "<f4>") 'counsel-imenu)
 (global-set-key (kbd "<f5>") 'counsel-rg)
 (global-set-key (kbd "<f8>") 'imenu-list-smart-toggle)
 (global-set-key (kbd "<f7>") 'counsel-bookmark)
@@ -173,7 +177,7 @@
    ["#2b303b" "#BF616A" "#A3BE8C" "#ECBE7B" "#8FA1B3" "#c678dd" "#46D9FF" "#c0c5ce"])
  '(compilation-message-face 'default)
  '(custom-safe-themes
-   '("643b4d181b6afa4306d65db76889d8b987e095ae8f262a4c71dd5669d39c9b09" "8ce796252a78d1a69e008c39d7b84a9545022b64609caac98dc7980d76ae34e3" "e1ecb0536abec692b5a5e845067d75273fe36f24d01210bf0aa5842f2a7e029f" "a339f231e63aab2a17740e5b3965469e8c0b85eccdfb1f9dbd58a30bdad8562b" "0eb3c0868ff890b0c4ee138069ce2a8936a8a69ba150efa6bfb9fb7c05af5ec3" "d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" default))
+   '("b69323309e5839676409607f91c69da2bf913914321c995f63960c3887224848" "99ea831ca79a916f1bd789de366b639d09811501e8c092c85b2cb7d697777f93" "643b4d181b6afa4306d65db76889d8b987e095ae8f262a4c71dd5669d39c9b09" "8ce796252a78d1a69e008c39d7b84a9545022b64609caac98dc7980d76ae34e3" "e1ecb0536abec692b5a5e845067d75273fe36f24d01210bf0aa5842f2a7e029f" "a339f231e63aab2a17740e5b3965469e8c0b85eccdfb1f9dbd58a30bdad8562b" "0eb3c0868ff890b0c4ee138069ce2a8936a8a69ba150efa6bfb9fb7c05af5ec3" "d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" default))
  '(fci-rule-color "#65737E")
  '(highlight-changes-colors '("#FD5FF0" "#AE81FF"))
  '(highlight-tail-colors
@@ -265,3 +269,24 @@
 (setq lsp-enable-file-watchers nil)
 
 (setq lsp-keep-workspace-alive nil)
+
+(setq lsp-completion-styles '(helm-flex))
+
+(setq lsp-enable-snippet nil)
+(setq evil-want-keybinding nil)
+(define-key evil-normal-state-map (kbd "gd") 'lsp-find-definition)
+(define-key evil-normal-state-map (kbd "gi") 'lsp-goto-implementation)
+
+(setq helm-default-display-buffer-functions '(display-buffer-in-side-window))
+
+(defun bsl/filter-buffers (buffer-list)
+  (delq nil (mapcar
+             (lambda (buffer)
+               (cond
+                    ((eq (with-current-buffer buffer major-mode)  'dired-mode) nil)
+                    ((eq (with-current-buffer buffer major-mode)  'org-mode) nil)
+                    ((eq (with-current-buffer buffer major-mode)  'org-agenda-mode) nil)
+                    (t buffer)))
+             buffer-list)))
+
+(advice-add 'helm-skip-boring-buffers :filter-return 'bsl/filter-buffers)
