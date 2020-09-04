@@ -25,6 +25,7 @@
 (straight-use-package 'flycheck)
 (straight-use-package 'gradle-mode)
 (straight-use-package 'groovy-mode)
+(straight-use-package 'window-numbering)
 (straight-use-package 'lsp-java)
 (straight-use-package 'lsp-ui)
 (straight-use-package 'cyberpunk-theme)
@@ -290,3 +291,6 @@
              buffer-list)))
 
 (advice-add 'helm-skip-boring-buffers :filter-return 'bsl/filter-buffers)
+
+
+(window-numbering-mode 1)
