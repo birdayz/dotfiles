@@ -1,0 +1,30 @@
+background_opacity: 0.5
+# Font configuration (changes require restart)
+font:
+  size: 12
+  normal:
+    family: Source Code Pro for Powerline
+    style: Regular
+
+  bold:
+    family: Source Code Pro for Powerline
+    style: Bold
+
+  italic:
+    family: Droid Sans Mono Slashed for Powerline
+    style: Italic
+
+scrolling:
+  # How many lines of scrollback to keep,
+  # '0' will disable scrolling.
+  history: 100000
+
+  # Number of lines the viewport will move for every line
+  # scrolled when scrollback is enabled (history > 0).
+  multiplier: 3
+
+key_bindings:
+  - { key: PageUp, action: ScrollPageUp }
+  - { key: PageDown, action: ScrollPageDown }
+  - { key: End, action: ScrollToBottom }
+  - { key: Home, action: ScrollToTop }
