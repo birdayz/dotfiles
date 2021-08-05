@@ -1,22 +1,20 @@
-background_opacity: 0.5
+background_opacity: 0.7
 # Font configuration (changes require restart)
 font:
   size: 12
   normal:
-    family: Source Code Pro for Powerline
+    family: DejaVu Sans Mono
     style: Regular
 
   bold:
-    family: Source Code Pro for Powerline
+    family: DejaVu Sans Mono
     style: Bold
 
   italic:
-    family: Droid Sans Mono Slashed for Powerline
+    family: DejaVu Sans Mono
     style: Italic
 
 scrolling:
-  # How many lines of scrollback to keep,
-  # '0' will disable scrolling.
   history: 100000
 
   # Number of lines the viewport will move for every line
