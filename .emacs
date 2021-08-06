@@ -13,6 +13,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(straight-use-package 'use-package)
 (straight-use-package 'evil)
 (straight-use-package 'lsp-mode)
 (straight-use-package 'lsp-ui)
@@ -32,7 +33,11 @@
 (straight-use-package 'selectrum-prescient)
 (straight-use-package 'dashboard)
 (straight-use-package 'company-box)
-(straight-use-package 'powerline)
+;;(straight-use-package 'powerline)
+(straight-use-package 'prism)
+(straight-use-package 'undo-fu)
+(straight-use-package 'all-the-icons)
+(straight-use-package 'doom-modeline)
 
 ;(require 'dashboard)
 (dashboard-setup-startup-hook)
@@ -75,6 +80,8 @@
 (global-set-key (kbd "<f1>") 'counsel-find-file)
 (global-set-key (kbd "<f2>") 'counsel-recentf)
 (global-set-key (kbd "<f3>") 'counsel-fzf)
+(global-set-key (kbd "<f4>") 'counsel-imenu)
+(global-set-key (kbd "<f4>") 'counsel-rg)
 ;(global-set-key (kbd "<tab>") 'ace-window)
 
 (custom-set-variables
@@ -101,8 +108,16 @@
 (require 'company-box)
 (add-hook 'company-mode-hook 'company-box-mode)
 
-(require 'powerline)
-(powerline-default-theme)
+;;(require 'powerline)
+;;(powerline-default-theme)
 
 (straight-use-package 'evil-collection)
 (evil-collection-init)
+;(prism-mode 1)
+
+;(global-undo-tree-mode -1)
+(define-key evil-normal-state-map (kbd "u") 'undo-fu-only-undo)
+(define-key evil-normal-state-map (kbd "C-r") 'undo-fu-only-redo)
+
+
+(doom-modeline-mode 1)
