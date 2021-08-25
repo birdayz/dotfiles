@@ -29,8 +29,8 @@
 (straight-use-package 'prescient)
 (straight-use-package 'ivy-prescient)
 (straight-use-package 'company-prescient)
-(straight-use-package 'selectrum)
-(straight-use-package 'selectrum-prescient)
+;;(straight-use-package 'selectrum)
+;;(straight-use-package 'selectrum-prescient)
 (straight-use-package 'dashboard)
 (straight-use-package 'company-box)
 ;;(straight-use-package 'powerline)
@@ -38,6 +38,8 @@
 (straight-use-package 'undo-fu)
 (straight-use-package 'all-the-icons)
 (straight-use-package 'doom-modeline)
+(straight-use-package 'fzf)
+(straight-use-package 'bazel)
 
 ;(require 'dashboard)
 (dashboard-setup-startup-hook)
@@ -45,8 +47,8 @@
 
 ;; Enable evil
 (evil-mode 1)
-(ivy-prescient-mode 1)
 (ivy-mode 1)
+(ivy-prescient-mode 1)
 
 (setq vc-follow-symlinks t)
 
@@ -73,15 +75,15 @@
 (global-hl-line-mode 1)
 (show-paren-mode 1)
 
-(prescient-persist-mode +1)
+;;(prescient-persist-mode +1)
 
 
 ;; keybinds
 (global-set-key (kbd "<f1>") 'counsel-find-file)
 (global-set-key (kbd "<f2>") 'counsel-recentf)
-(global-set-key (kbd "<f3>") 'counsel-fzf)
+(global-set-key (kbd "<f3>") 'fzf-git)
 (global-set-key (kbd "<f4>") 'counsel-imenu)
-(global-set-key (kbd "<f4>") 'counsel-rg)
+(global-set-key (kbd "<f5>") 'counsel-rg)
 ;(global-set-key (kbd "<tab>") 'ace-window)
 
 (custom-set-variables
@@ -90,7 +92,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("c1284dd4c650d6d74cfaf0106b8ae42270cab6c58f78efc5b7c825b6a4580417" default)))
+   '("c1284dd4c650d6d74cfaf0106b8ae42270cab6c58f78efc5b7c825b6a4580417" default))
+ '(warning-suppress-log-types '((comp))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -98,7 +101,7 @@
  ;; If there is more than one, they won't work right.
  )
 (load-theme 'dracula t)
-(selectrum-mode +1)
+;;(selectrum-mode +1)
 
 (savehist-mode 1)
 
@@ -121,3 +124,27 @@
 
 
 (doom-modeline-mode 1)
+;;(setq lsp-enable-file-watchers nil)
+
+;;(with-eval-after-load 'lsp-mode
+;;  (add-to-list 'lsp-file-watch-ignored-directories "bazel-bin")
+ ;; ;; or
+;;  (add-to-list 'lsp-file-watch-ignored-files "[/\\\\]\\.my-files\\'"))
+
+  ;;(push "[/\\\\][^/\\\\]*\\.\\(json\\|html\\|jade\\)$" lsp-file-watch-ignored-files) ; json
+
+
+
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bazel-bin$")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bazel-build$")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bazel-esp-iot$")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bazel-out$")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bazel-testlogs$")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]app$")
+  ;; or
+  (add-to-list 'lsp-file-watch-ignored-files "[/\\\\]\\.my-files\\'"))
+(setq lsp-file-watch-threshold 2000)
+
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
