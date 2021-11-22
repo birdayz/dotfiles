@@ -74,8 +74,8 @@ lua <<EOF
 -- following options are the default
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 require'nvim-tree'.setup {
-  disable_netrw       = true,
-  hijack_netrw        = true,
+  disable_netrw       = false,
+  hijack_netrw        = false,
   open_on_setup       = false,
   ignore_ft_on_setup  = {},
   auto_close          = false,
@@ -267,7 +267,7 @@ require'lualine'.setup {
     {
       'filename',
       file_status = true, -- displays file status (readonly status, modified status)
-      path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
+      path = 2 -- 0 = just filename, 1 = relative path, 2 = absolute path
     }
     },
     lualine_x = {'encoding', 'fileformat', 'filetype'},
@@ -295,30 +295,6 @@ autocmd WinLeave,BufLeave,BufWinLeave,FocusLost            * silent! lua require
 augroup end
 
 lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  rainbow = {
-    enable = true,
-    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-    max_file_lines = nil, -- Do not enable for files with more than n lines, int
-    -- colors = {}, -- table of hex strings
-    -- termcolors = {} -- table of colour name strings
-    },
-  highlight = {
-    enable = true,
-    custom_captures = {
-      -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
-      ["foo.bar"] = "Identifier",
-    },
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
-}
-EOF
-
-lua <<EOF
 require("nvim-treesitter.configs").setup {
   rainbow = {
     enable = true,
@@ -329,6 +305,9 @@ require("nvim-treesitter.configs").setup {
   },
   indent = {
     enable = false
+  },
+  highlight = {
+    enable = true,
   },
 }
 
