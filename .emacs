@@ -40,6 +40,8 @@
 (straight-use-package 'doom-modeline)
 (straight-use-package 'fzf)
 (straight-use-package 'bazel)
+(straight-use-package 'protobuf-mode)
+(straight-use-package 'projectile)
 
 ;(require 'dashboard)
 (dashboard-setup-startup-hook)
@@ -75,7 +77,7 @@
 (global-hl-line-mode 1)
 (show-paren-mode 1)
 
-;;(prescient-persist-mode +1)
+(prescient-persist-mode +1)
 
 
 ;; keybinds
@@ -84,6 +86,7 @@
 (global-set-key (kbd "<f3>") 'fzf-git)
 (global-set-key (kbd "<f4>") 'counsel-imenu)
 (global-set-key (kbd "<f5>") 'counsel-rg)
+(global-set-key (kbd "<f9>") 'text-scale-adjust)
 ;(global-set-key (kbd "<tab>") 'ace-window)
 
 (custom-set-variables
@@ -148,3 +151,8 @@
 
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
+(setq lsp-file-watch-threshold 3000)
+
+(setq backup-directory-alist `(("." . "~/.saves")))
+
+(setq delete-old-versions t)
