@@ -1,4 +1,9 @@
 call plug#begin('~/.vim/plugged')
+Plug 'moll/vim-bbye' " optional dependency
+Plug 'aymericbeaumet/vim-symlink'
+Plug 'gruvbox-community/gruvbox'
+Plug 'ggandor/lightspeed.nvim'
+Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -337,14 +342,15 @@ require('telescope').setup {
 require('telescope').load_extension('fzf')
 require('nvim_comment').setup()
 EOF
-colorscheme tokyonight
+"colorscheme tokyonight
+
 
 nnoremap <F1> <cmd>Telescope file_browser<cr>
 nnoremap <F2> <cmd>History<cr>
 ""command! Ctrlp execute (exists("*fugitive#head") && len(fugitive#head())) ? 'GFiles' : 'Files'
 command! Ctrlp execute (len(system('git rev-parse'))) ? ':Files' : ':GFiles'
 map <F3> :Ctrlp<CR>
-nnoremap <F4> <cmd>Telescope help_tags<cr>
+nnoremap <F4> <cmd>Telescope lsp_document_symbols<cr>
 nnoremap <F5> <cmd>Telescope live_grep<cr>
 nnoremap <F6> <cmd>NvimTreeToggle<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
@@ -365,3 +371,41 @@ set scrollback=100000
 :  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
 :  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
 :augroup END
+":tnoremap <Esc> <C-\><C-n>
+"
+" let g:minimap_width = 10
+" let g:minimap_auto_start = 1
+" let g:minimap_auto_start_win_enter = 1
+" let g:minimap_highlight_range = 1
+" let g:minimap_highlight_search = 1
+" let g:minimap_git_colors = 1
+
+function! ToggleQuickFix()
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+        copen
+    else
+        cclose
+    endif
+endfunction
+
+nnoremap <silent> <F7> :call ToggleQuickFix()<cr>
+let g:asyncrun_open = 8
+set nohlsearch
+set hidden
+set noerrorbells
+set nowrap
+set noswapfile
+set nobackup
+set undodir=~/.vim/undodir
+set undofile
+set incsearch
+set scrolloff=8
+set colorcolumn=120
+"highlight Normal guibg=none
+"autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE " transparent bg
+let mapleader = " "
+
+colorscheme gruvbox
+highlight Normal     ctermbg=NONE guibg=NONE
+highlight LineNr     ctermbg=NONE guibg=NONE
+highlight SignColumn ctermbg=NONE guibg=NONE
