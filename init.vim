@@ -1,4 +1,6 @@
 call plug#begin('~/.vim/plugged')
+Plug 'neovim/nvim-lspconfig'
+Plug 'tami5/lspsaga.nvim', {'branch': 'nvim51'}
 Plug 'moll/vim-bbye' " optional dependency
 Plug 'aymericbeaumet/vim-symlink'
 Plug 'gruvbox-community/gruvbox'
@@ -409,3 +411,9 @@ colorscheme gruvbox
 highlight Normal     ctermbg=NONE guibg=NONE
 highlight LineNr     ctermbg=NONE guibg=NONE
 highlight SignColumn ctermbg=NONE guibg=NONE
+
+lua <<EOF
+local saga = require 'lspsaga'
+saga.init_lsp_saga()
+EOF
+
