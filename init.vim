@@ -22,7 +22,8 @@ Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'fatih/vim-go'
 Plug 'Xuyuanp/scrollbar.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
-Plug 'terrortylor/nvim-comment'
+"Plug 'terrortylor/nvim-comment'
+Plug 'numToStr/Comment.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'sheerun/vim-polyglot'
@@ -65,6 +66,8 @@ Plug 'kyazdani42/nvim-web-devicons'
 " Plug 'dcampos/cmp-snippy'
 
 call plug#end()
+
+lua require('Comment').setup()
 
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
@@ -342,7 +345,7 @@ require('telescope').setup {
 -- To get fzf loaded and working with telescope, you need to call
 -- load_extension, somewhere after setup function:
 require('telescope').load_extension('fzf')
-require('nvim_comment').setup()
+--require('nvim_comment').setup()
 EOF
 "colorscheme tokyonight
 
@@ -416,4 +419,6 @@ lua <<EOF
 local saga = require 'lspsaga'
 saga.init_lsp_saga()
 EOF
+
+set cursorline
 
