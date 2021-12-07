@@ -22,33 +22,21 @@ Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'fatih/vim-go'
 Plug 'Xuyuanp/scrollbar.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
-"Plug 'terrortylor/nvim-comment'
 Plug 'numToStr/Comment.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'sheerun/vim-polyglot'
-
-" Build the extra binary if cargo exists on your system.
 Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
-
 Plug 'nvim-lualine/lualine.nvim'
-" If you want to have icons in your statusline choose one of these
 Plug 'kyazdani42/nvim-web-devicons'
-
-
 Plug 'p00f/nvim-ts-rainbow'
-
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
-
 Plug 'phaazon/hop.nvim'
-
 Plug 'jreybert/vimagit'
-
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
-
 Plug 'ibhagwan/fzf-lua'
 Plug 'vijaymarupudi/nvim-fzf'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -221,6 +209,16 @@ require'nvim-tree'.setup {
   }
 
   require('lspconfig')['gopls'].setup(golang_setup)
+
+  require'lspconfig'.yamlls.setup{
+    settings = {
+        yaml = {
+            schemas = {
+                ["kubernetes"] = "*.yaml"
+            },
+        },
+    }
+  }
 
 
   function goimports(timeoutms)
@@ -422,3 +420,4 @@ EOF
 
 set cursorline
 
+nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>
