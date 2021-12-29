@@ -1,4 +1,5 @@
 call plug#begin('~/.vim/plugged')
+Plug 'airblade/vim-rooter'
 Plug 'neovim/nvim-lspconfig'
 Plug 'tami5/lspsaga.nvim', {'branch': 'nvim51'}
 Plug 'moll/vim-bbye' " optional dependency
@@ -18,10 +19,11 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'cljoly/telescope-repo.nvim'
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'fatih/vim-go'
 Plug 'Xuyuanp/scrollbar.nvim'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update - also run TSInstall go
 Plug 'numToStr/Comment.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -40,19 +42,6 @@ Plug 'kyazdani42/nvim-tree.lua'
 Plug 'ibhagwan/fzf-lua'
 Plug 'vijaymarupudi/nvim-fzf'
 Plug 'kyazdani42/nvim-web-devicons'
-
-" For luasnip users.
-" Plug 'L3MON4D3/LuaSnip'
-" Plug 'saadparwaiz1/cmp_luasnip'
-
-" For ultisnips users.
-" Plug 'SirVer/ultisnips'
-" Plug 'quangnguyen30192/cmp-nvim-ultisnips'
-
-" For snippy users.
-" Plug 'dcampos/nvim-snippy'
-" Plug 'dcampos/cmp-snippy'
-
 call plug#end()
 
 lua require('Comment').setup()
@@ -61,12 +50,12 @@ let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
 set number
-
-
 set completeopt=menu,menuone,noselect
 
-autocmd BufWritePre *.go lua vim.lsp.buf.formatting()
-autocmd BufWritePre *.go lua goimports(1000)
+" autocmd BufWritePre *.go lua vim.lsp.buf.formatting()
+" autocmd BufWritePre *.go lua goimports(1000)
+
+" let g:go_fmt_command = "goimports"
 
 lua <<EOF
 -- following options are the default
@@ -183,6 +172,16 @@ require'nvim-tree'.setup {
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
+--Enable (broadcasting) snippet capability for completion
+local capabilitiesHtml = vim.lsp.protocol.make_client_capabilities()
+capabilitiesHtml.textDocument.completion.completionItem.snippetSupport = true
+
+require'lspconfig'.html.setup {
+  capabilities = capabilitiesHtml,
+}
+
+require'lspconfig'.html.setup{}
+
   -- Mappings.
   local opts = { noremap=true, silent=true }
 
@@ -270,7 +269,7 @@ require'lualine'.setup {
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff',
-                  {'diagnostics', sources={'nvim_lsp', 'coc'}}},
+                  {'diagnostics', sources={'nvim_diagnostic'}}},
   lualine_c = {
     {
       'filename',
@@ -343,16 +342,19 @@ require('telescope').setup {
 -- To get fzf loaded and working with telescope, you need to call
 -- load_extension, somewhere after setup function:
 require('telescope').load_extension('fzf')
+require'telescope'.load_extension'repo'
+
 --require('nvim_comment').setup()
 EOF
 "colorscheme tokyonight
 
 
 nnoremap <F1> <cmd>Telescope file_browser<cr>
-nnoremap <F2> <cmd>History<cr>
+nnoremap <F2> <cmd>Telescope oldfiles<cr>
 ""command! Ctrlp execute (exists("*fugitive#head") && len(fugitive#head())) ? 'GFiles' : 'Files'
-command! Ctrlp execute (len(system('git rev-parse'))) ? ':Files' : ':GFiles'
-map <F3> :Ctrlp<CR>
+command! Filez execute (len(system('git rev-parse'))) ? ':Telescope find_files' : ':Telescope git_files'
+map <F3> :Filez<CR>
+map <F8> :lua require'telescope'.extensions.repo.cached_list{file_ignore_patterns={"/%.cache/", "/%.cargo/", "/%.vim/"}}<CR>
 nnoremap <F4> <cmd>Telescope lsp_document_symbols<cr>
 nnoremap <F5> <cmd>Telescope live_grep<cr>
 nnoremap <F6> <cmd>NvimTreeToggle<cr>
@@ -396,7 +398,7 @@ let g:asyncrun_open = 8
 set nohlsearch
 set hidden
 set noerrorbells
-set nowrap
+"set nowrap
 set noswapfile
 set nobackup
 set undodir=~/.vim/undodir
@@ -416,8 +418,13 @@ highlight SignColumn ctermbg=NONE guibg=NONE
 lua <<EOF
 local saga = require 'lspsaga'
 saga.init_lsp_saga()
+
 EOF
 
 set cursorline
 
 nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>
+nnoremap <silent> g? <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+
+
+
