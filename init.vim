@@ -1,6 +1,8 @@
 call plug#begin('~/.vim/plugged')
-Plug 'airblade/vim-rooter'
+"Plug 'airblade/vim-rooter'
 Plug 'neovim/nvim-lspconfig'
+Plug 'tami5/sqlite.lua'
+Plug 'nvim-telescope/telescope-frecency.nvim'
 Plug 'tami5/lspsaga.nvim', {'branch': 'nvim51'}
 Plug 'moll/vim-bbye' " optional dependency
 Plug 'aymericbeaumet/vim-symlink'
@@ -198,7 +200,7 @@ require'lspconfig'.html.setup{}
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
@@ -343,6 +345,7 @@ require('telescope').setup {
 -- load_extension, somewhere after setup function:
 require('telescope').load_extension('fzf')
 require'telescope'.load_extension'repo'
+require'telescope'.load_extension'frecency'
 
 --require('nvim_comment').setup()
 EOF
@@ -424,7 +427,7 @@ EOF
 set cursorline
 
 nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>
-nnoremap <silent> g? <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+nnoremap <silent> g? <cmd>lua vim.diagnostic.open_float()<CR>
 
 
 
