@@ -1,6 +1,7 @@
 call plug#begin('~/.vim/plugged')
 "Plug 'airblade/vim-rooter'
 Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'tami5/sqlite.lua'
 Plug 'nvim-telescope/telescope-frecency.nvim'
 Plug 'tami5/lspsaga.nvim', {'branch': 'nvim51'}
@@ -188,6 +189,12 @@ require'lspconfig'.html.setup{}
   local opts = { noremap=true, silent=true }
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
+vim.api.nvim_set_keymap(
+  "n",
+  "<F9>",
+  "<cmd>lua require 'telescope'.extensions.file_browser.file_browser()<CR>",
+  {noremap = true}
+)
   buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -323,6 +330,8 @@ require("nvim-treesitter.configs").setup {
 local map = vim.api.nvim_set_keymap
 local default_opts = {noremap = true}
 map('n', '<leader>ff', "<cmd>lua require'telescope.builtin'.find_files({ find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<cr>", default_opts)
+map('n', '<F9>', "<cmd>lua require'telescope'.extensions.file_browser.file_browser()<CR>", default_opts)
+
 EOF
 
 lua <<EOF
@@ -346,6 +355,7 @@ require('telescope').setup {
 require('telescope').load_extension('fzf')
 require'telescope'.load_extension'repo'
 require'telescope'.load_extension'frecency'
+require("telescope").load_extension "file_browser"
 
 --require('nvim_comment').setup()
 EOF
