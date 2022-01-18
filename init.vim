@@ -25,7 +25,8 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'cljoly/telescope-repo.nvim'
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'fatih/vim-go'
-Plug 'Xuyuanp/scrollbar.nvim'
+"Plug 'Xuyuanp/scrollbar.nvim'
+Plug 'dstein64/nvim-scrollview'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update - also run TSInstall go
 Plug 'numToStr/Comment.nvim'
 Plug 'nvim-lua/plenary.nvim'
@@ -189,12 +190,6 @@ require'lspconfig'.html.setup{}
   local opts = { noremap=true, silent=true }
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
-vim.api.nvim_set_keymap(
-  "n",
-  "<F9>",
-  "<cmd>lua require 'telescope'.extensions.file_browser.file_browser()<CR>",
-  {noremap = true}
-)
   buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -362,14 +357,15 @@ EOF
 "colorscheme tokyonight
 
 
-nnoremap <F1> <cmd>Telescope file_browser<cr>
+nnoremap <F10> <cmd>vertical resize +5<cr>
+nnoremap <F9> <cmd>vertical resize -5<cr>
 nnoremap <F2> <cmd>Telescope oldfiles<cr>
-""command! Ctrlp execute (exists("*fugitive#head") && len(fugitive#head())) ? 'GFiles' : 'Files'
+nnoremap <F1> <cmd>lua require 'telescope'.extensions.file_browser.file_browser()<CR>
 command! Filez execute (len(system('git rev-parse'))) ? ':Telescope find_files' : ':Telescope git_files'
 map <F3> :Filez<CR>
 map <F8> :lua require'telescope'.extensions.repo.cached_list{file_ignore_patterns={"/%.cache/", "/%.cargo/", "/%.vim/"}}<CR>
 nnoremap <F4> <cmd>Telescope lsp_document_symbols<cr>
-nnoremap <F5> <cmd>Telescope live_grep<cr>
+nnoremap <F5> <cmd>lua require('telescope.builtin').live_grep{ cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1] }<cr>
 nnoremap <F6> <cmd>NvimTreeToggle<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
