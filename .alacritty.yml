@@ -1,7 +1,7 @@
-background_opacity: 0.9
+background_opacity: 0.7
 # Font configuration (changes require restart)
 font:
-  size: 12
+  size: 11
   normal:
     family: DejaVu Sans Mono
     style: Regular
