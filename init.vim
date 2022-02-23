@@ -1,5 +1,6 @@
 call plug#begin('~/.vim/plugged')
 "Plug 'airblade/vim-rooter'
+Plug 'rfratto/vim-go-testify'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'tami5/sqlite.lua'
@@ -324,7 +325,7 @@ require("nvim-treesitter.configs").setup {
 
 local map = vim.api.nvim_set_keymap
 local default_opts = {noremap = true}
-map('n', '<leader>ff', "<cmd>lua require'telescope.builtin'.find_files({ find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<cr>", default_opts)
+map('n', '<leader>ff', "<cmd>lua require'telescope.builtin'.find_files({ find_command = {'rg', '--no-ignore-vcs', '--files', '--hidden', '-g', '!.git' }})<cr>", default_opts)
 map('n', '<F9>', "<cmd>lua require'telescope'.extensions.file_browser.file_browser()<CR>", default_opts)
 
 EOF
@@ -334,7 +335,13 @@ require'hop'.setup()
 
 -- You dont need to set any of these options. These are the default ones. Only
 -- the loading is important
+local actions = require("telescope.actions")
 require('telescope').setup {
+  pickers = {
+    find_files = {
+      hidden = true
+    }
+  },
   extensions = {
     fzf = {
       fuzzy = true,                    -- false will only do exact matching
@@ -343,6 +350,19 @@ require('telescope').setup {
       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
                                        -- the default case_mode is "smart_case"
     }
+  },
+  defaults = {
+    path_display = function(opts, path)
+              return string.gsub(path,os.getenv("HOME"),"~")
+            end,
+    mappings = {
+      i = {
+        ["<esc>"] = actions.close,
+        ["<F1>"] = actions.close,
+        ["<F2>"] = actions.close,
+        ["<F3>"] = actions.close
+      },
+    },
   }
 }
 -- To get fzf loaded and working with telescope, you need to call
@@ -435,5 +455,6 @@ set cursorline
 nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>
 nnoremap <silent> g? <cmd>lua vim.diagnostic.open_float()<CR>
 
-
-
+if has('shada') " ignore /tmp and /mnt in shada history
+  set shada=!,'1000,<50,s100,h,r/tmp,r/mnt
+endif
