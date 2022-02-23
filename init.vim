@@ -36,7 +36,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'p00f/nvim-ts-rainbow'
+"Plug 'p00f/nvim-ts-rainbow'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'phaazon/hop.nvim'
