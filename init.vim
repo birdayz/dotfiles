@@ -1,11 +1,15 @@
 call plug#begin('~/.vim/plugged')
 "Plug 'airblade/vim-rooter'
+"
+Plug 'sbdchd/neoformat'
+Plug 'projekt0n/github-nvim-theme'
+Plug 'xiyaowong/nvim-transparent'
 Plug 'rfratto/vim-go-testify'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'tami5/sqlite.lua'
 Plug 'nvim-telescope/telescope-frecency.nvim'
-Plug 'tami5/lspsaga.nvim', {'branch': 'nvim51'}
+Plug 'tami5/lspsaga.nvim', {'branch': 'main'}
 Plug 'moll/vim-bbye' " optional dependency
 Plug 'aymericbeaumet/vim-symlink'
 Plug 'gruvbox-community/gruvbox'
@@ -340,6 +344,9 @@ require('telescope').setup {
   pickers = {
     find_files = {
       hidden = true
+    },
+    oldfiles = {
+        theme = "ivy"
     }
   },
   extensions = {
@@ -439,12 +446,27 @@ set colorcolumn=120
 "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE " transparent bg
 let mapleader = " "
 
-colorscheme gruvbox
+"colorscheme gruvbox
 highlight Normal     ctermbg=NONE guibg=NONE
 highlight LineNr     ctermbg=NONE guibg=NONE
 highlight SignColumn ctermbg=NONE guibg=NONE
 
 lua <<EOF
+require("transparent").setup({
+  enable = true, -- boolean: enable transparent
+  extra_groups = { -- table/string: additional groups that should be clear
+    -- In particular, when you set it to 'all', that means all avaliable groups
+
+    -- example of akinsho/nvim-bufferline.lua
+    "BufferLineTabClose",
+    "BufferlineBufferSelected",
+    "BufferLineFill",
+    "BufferLineBackground",
+    "BufferLineSeparator",
+    "BufferLineIndicatorSelected",
+  },
+  exclude = {}, -- table: groups you don't want to clear
+})
 local saga = require 'lspsaga'
 saga.init_lsp_saga()
 
@@ -458,3 +480,6 @@ nnoremap <silent> g? <cmd>lua vim.diagnostic.open_float()<CR>
 if has('shada') " ignore /tmp and /mnt in shada history
   set shada=!,'1000,<50,s100,h,r/tmp,r/mnt
 endif
+
+
+colorscheme github_*
