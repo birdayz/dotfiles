@@ -1,8 +1,8 @@
 call plug#begin('~/.vim/plugged')
 "Plug 'airblade/vim-rooter'
-"
+Plug 'EdenEast/nightfox.nvim'
 Plug 'sbdchd/neoformat'
-Plug 'projekt0n/github-nvim-theme'
+"Plug 'projekt0n/github-nvim-theme'
 Plug 'xiyaowong/nvim-transparent'
 Plug 'rfratto/vim-go-testify'
 Plug 'neovim/nvim-lspconfig'
@@ -40,7 +40,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
-"Plug 'p00f/nvim-ts-rainbow'
+Plug 'p00f/nvim-ts-rainbow'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'phaazon/hop.nvim'
@@ -67,6 +67,32 @@ set completeopt=menu,menuone,noselect
 " let g:go_fmt_command = "goimports"
 
 lua <<EOF
+local nightfox = require('nightfox')
+
+-- This function set the configuration of nightfox. If a value is not passed in the setup function
+-- it will be taken from the default configuration above
+nightfox.setup({
+  transparent = true, -- Disable setting the background color
+  styles = {
+    comments = "italic", -- change style of comments to be italic
+    keywords = "bold", -- change style of keywords to be bold
+    functions = "italic,bold" -- styles can be a comma separated list
+  },
+  inverse = {
+    match_paren = true, -- inverse the highlighting of match_parens
+  },
+  colors = {
+    red = "#FF000", -- Override the red color for MAX POWER
+    bg_alt = "#000000",
+  },
+  hlgroups = {
+    TSPunctDelimiter = { fg = "${red}" }, -- Override a highlight group with the color red
+    LspCodeLens = { bg = "#000000", style = "italic" },
+  }
+})
+
+-- Load the configuration set above and apply the colorscheme
+nightfox.load()
 -- following options are the default
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 require'nvim-tree'.setup {
@@ -269,7 +295,7 @@ lua << END
 require'lualine'.setup {
   options = {
     icons_enabled = true,
-    theme = 'nightfly',
+    theme = 'nightfox',
     component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
     disabled_filetypes = {},
@@ -482,4 +508,9 @@ if has('shada') " ignore /tmp and /mnt in shada history
 endif
 
 
-colorscheme github_*
+"colorscheme github_*
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
+:set foldlevelstart=99
+let g:transparent_enabled = v:true
+colorscheme nightfox
