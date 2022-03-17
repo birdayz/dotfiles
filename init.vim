@@ -514,3 +514,6 @@ set foldexpr=nvim_treesitter#foldexpr()
 :set foldlevelstart=99
 let g:transparent_enabled = v:true
 colorscheme nightfox
+" Git commit messages
+:autocmd FileType gitcommit set textwidth=72
+:autocmd FileType gitcommit set colorcolumn=51,73
