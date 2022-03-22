@@ -4,7 +4,7 @@ Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'EdenEast/nightfox.nvim'
 Plug 'sbdchd/neoformat'
-"Plug 'projekt0n/github-nvim-theme'
+Plug 'projekt0n/github-nvim-theme'
 Plug 'xiyaowong/nvim-transparent'
 Plug 'rfratto/vim-go-testify'
 Plug 'neovim/nvim-lspconfig'
@@ -53,6 +53,9 @@ Plug 'kyazdani42/nvim-tree.lua'
 Plug 'ibhagwan/fzf-lua'
 Plug 'vijaymarupudi/nvim-fzf'
 Plug 'kyazdani42/nvim-web-devicons'
+Plug 'dense-analysis/ale'
+Plug 'bufbuild/vim-buf'
+
 call plug#end()
 
 lua require('Comment').setup()
@@ -413,8 +416,12 @@ require'telescope'.load_extension'frecency'
 require("telescope").load_extension "file_browser"
 
 --require('nvim_comment').setup()
+
 EOF
-"colorscheme tokyonight
+
+let g:tokyonight_transparent = 1
+
+colorscheme tokyonight
 
 
 nnoremap <F10> <cmd>vertical resize +5<cr>
@@ -520,7 +527,7 @@ set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 :set foldlevelstart=99
 let g:transparent_enabled = v:true
-colorscheme nightfox
+" colorscheme nightfox
 " Git commit messages
 :autocmd FileType gitcommit set textwidth=72
 :autocmd FileType gitcommit set colorcolumn=51,73
@@ -581,3 +588,8 @@ null_ls.setup({
     on_attach = on_attach,
 })
 EOF
+let g:ale_linters = {
+\   'proto': ['buf-lint',],
+\}
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_linters_explicit = 1
