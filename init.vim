@@ -11,7 +11,6 @@ Plug 'rfratto/vim-go-testify'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'tami5/sqlite.lua'
-Plug 'nvim-telescope/telescope-frecency.nvim'
 Plug 'tami5/lspsaga.nvim', {'branch': 'main'}
 Plug 'moll/vim-bbye' " optional dependency
 Plug 'aymericbeaumet/vim-symlink'
@@ -428,9 +427,6 @@ require('telescope').setup {
     oldfiles = {
         theme = "ivy"
     },
-    frecency = {
-        theme = "ivy"
-    }
   },
   extensions = {
     file_browser = {
@@ -444,15 +440,6 @@ require('telescope').setup {
       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
                                        -- the default case_mode is "smart_case"
     },
-    frecency = {
-      show_scores = false,
-      show_unindexed = true,
-      ignore_patterns = {"*.git/*", "*/tmp/*"},
-      disable_devicons = false,
-      workspaces = {
-        ["projects"]    = "/home/birdy/projects",
-      }
-    }
   },
   defaults = {
     path_display = function(opts, path)
@@ -472,7 +459,6 @@ require('telescope').setup {
 -- load_extension, somewhere after setup function:
 require('telescope').load_extension('fzf')
 require'telescope'.load_extension'repo'
-require'telescope'.load_extension'frecency'
 require("telescope").load_extension "file_browser"
 
 --require('nvim_comment').setup()
