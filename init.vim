@@ -1,9 +1,10 @@
 call plug#begin('~/.vim/plugged')
+Plug 'chentau/marks.nvim'
 "Plug 'airblade/vim-rooter'
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'EdenEast/nightfox.nvim'
-Plug 'sbdchd/neoformat'
+"Plug 'sbdchd/neoformat'
 Plug 'projekt0n/github-nvim-theme'
 Plug 'xiyaowong/nvim-transparent'
 Plug 'rfratto/vim-go-testify'
@@ -32,7 +33,6 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'cljoly/telescope-repo.nvim'
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'fatih/vim-go'
-"Plug 'Xuyuanp/scrollbar.nvim'
 Plug 'dstein64/nvim-scrollview'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update - also run TSInstall go
 Plug 'numToStr/Comment.nvim'
@@ -150,6 +150,38 @@ require'nvim-tree'.setup {
   }
 }
 
+require'marks'.setup {
+  -- whether to map keybinds or not. default true
+  default_mappings = true,
+  -- which builtin marks to show. default {}
+  builtin_marks = { ".", "<", ">", "^" },
+  -- whether movements cycle back to the beginning/end of buffer. default true
+  cyclic = true,
+  -- whether the shada file is updated after modifying uppercase marks. default false
+  force_write_shada = false,
+  -- how often (in ms) to redraw signs/recompute mark positions. 
+  -- higher values will have better performance but may cause visual lag, 
+  -- while lower values may cause performance penalties. default 150.
+  refresh_interval = 250,
+  -- sign priorities for each type of mark - builtin marks, uppercase marks, lowercase
+  -- marks, and bookmarks.
+  -- can be either a table with all/none of the keys, or a single number, in which case
+  -- the priority applies to all marks.
+  -- default 10.
+  sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
+  -- disables mark tracking for specific filetypes. default {}
+  excluded_filetypes = {},
+  -- marks.nvim allows you to configure up to 10 bookmark groups, each with its own
+  -- sign/virttext. Bookmarks can be used to group together positions and quickly move
+  -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
+  -- default virt_text is "".
+  bookmark_0 = {
+    sign = "⚑",
+    virt_text = "hello world"
+  },
+  mappings = {}
+}
+
 
   -- Setup nvim-cmp.
   local cmp = require'cmp'
@@ -260,8 +292,14 @@ require'lspconfig'.html.setup{}
   require'lspconfig'.yamlls.setup{
     settings = {
         yaml = {
+            format = {
+                enable = "false"
+            },
             schemas = {
-                ["kubernetes"] = "*.yaml"
+                ["kubernetes"] = "deployment.yaml",
+                ["https://raw.githubusercontent.com/docker/cli/master/cli/compose/schema/data/config_schema_v3.9.json"] = "docker-compose.yaml",
+                ["https://json.schemastore.org/taskfile.json"] = "Taskfile.yml"
+
             },
         },
     }
@@ -384,17 +422,36 @@ require('telescope').setup {
     find_files = {
       hidden = true
     },
+    git_files = {
+      git_command = { "git", "ls-files", "--exclude-standard", "--cached", "--deduplicate" },
+    },
     oldfiles = {
+        theme = "ivy"
+    },
+    frecency = {
         theme = "ivy"
     }
   },
   extensions = {
+    file_browser = {
+      hidden = true,
+      respect_gitignore = true
+    },
     fzf = {
       fuzzy = true,                    -- false will only do exact matching
       override_generic_sorter = true,  -- override the generic sorter
       override_file_sorter = true,     -- override the file sorter
       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
                                        -- the default case_mode is "smart_case"
+    },
+    frecency = {
+      show_scores = false,
+      show_unindexed = true,
+      ignore_patterns = {"*.git/*", "*/tmp/*"},
+      disable_devicons = false,
+      workspaces = {
+        ["projects"]    = "/home/birdy/projects",
+      }
     }
   },
   defaults = {
@@ -477,7 +534,8 @@ let g:asyncrun_open = 8
 set nohlsearch
 set hidden
 set noerrorbells
-"set nowrap
+set nowrap
+set tw=500
 set noswapfile
 set nobackup
 set undodir=~/.vim/undodir
@@ -586,13 +644,17 @@ null_ls.setup({
     sources = {
         null_ls.builtins.diagnostics.eslint,
         null_ls.builtins.code_actions.eslint,
-        null_ls.builtins.formatting.prettier,
     },
     on_attach = on_attach,
 })
+vim.o.updatetime = 250
+vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
 EOF
 let g:ale_linters = {
 \   'proto': ['buf-lint',],
 \}
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_linters_explicit = 1
+
+
+"au FileType * lua << EOF | local parser = vim.treesitter.get_parser(0) | if parser ~= nil then parser:register_cbs({ on_bytes = function() parser:parse() end }) end | EOF
