@@ -644,3 +644,4 @@ let g:ale_linters_explicit = 1
 
 
 "au FileType * lua << EOF | local parser = vim.treesitter.get_parser(0) | if parser ~= nil then parser:register_cbs({ on_bytes = function() parser:parse() end }) end | EOF
+set viminfo='1000,f1
