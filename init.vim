@@ -4,7 +4,7 @@ Plug 'chentau/marks.nvim'
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'EdenEast/nightfox.nvim'
-"Plug 'sbdchd/neoformat'
+Plug 'sbdchd/neoformat'
 Plug 'projekt0n/github-nvim-theme'
 Plug 'xiyaowong/nvim-transparent'
 Plug 'rfratto/vim-go-testify'
@@ -471,6 +471,7 @@ colorscheme tokyonight
 
 
 nnoremap <F10> <cmd>vertical resize +5<cr>
+nnoremap <F11> <cmd>cnext<cr>
 nnoremap <F9> <cmd>vertical resize -5<cr>
 nnoremap <F2> <cmd>Telescope oldfiles<cr>
 nnoremap <F1> <cmd>lua require 'telescope'.extensions.file_browser.file_browser()<CR>
@@ -520,8 +521,8 @@ let g:asyncrun_open = 8
 set nohlsearch
 set hidden
 set noerrorbells
-set nowrap
-set tw=500
+" set nowrap
+set tw=80
 set noswapfile
 set nobackup
 set undodir=~/.vim/undodir
