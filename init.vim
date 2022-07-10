@@ -1,7 +1,8 @@
 call plug#begin('~/.vim/plugged')
-Plug 'chentau/marks.nvim'
+Plug 'chentoast/marks.nvim'
 "Plug 'airblade/vim-rooter'
 Plug 'jose-elias-alvarez/null-ls.nvim'
+Plug 'L3MON4D3/LuaSnip'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'EdenEast/nightfox.nvim'
 Plug 'sbdchd/neoformat'
@@ -69,36 +70,11 @@ set completeopt=menu,menuone,noselect
 " autocmd BufWritePre *.go lua goimports(1000)
 
 " let g:go_fmt_command = "goimports"
+"
+"
 
 lua <<EOF
-local nightfox = require('nightfox')
 
--- This function set the configuration of nightfox. If a value is not passed in the setup function
--- it will be taken from the default configuration above
-nightfox.setup({
-  options = {
-    inverse = {
-      match_paren = true, -- inverse the highlighting of match_parens
-    },
-    transparent = true, -- Disable setting the background color
-    styles = {
-      comments = "italic", -- change style of comments to be italic
-      keywords = "bold", -- change style of keywords to be bold
-      functions = "italic,bold" -- styles can be a comma separated list
-    },
-  },
-  palettes = {
-    red = "#FF000", -- Override the red color for MAX POWER
-    bg_alt = "#000000",
-  },
-  groups = {
-    TSPunctDelimiter = { fg = "${red}" }, -- Override a highlight group with the color red
-    LspCodeLens = { bg = "#000000", style = "italic" },
-  }
-})
-
--- Load the configuration set above and apply the colorscheme
-vim.cmd("colorscheme nightfox")
 -- following options are the default
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 require'nvim-tree'.setup {
@@ -106,14 +82,9 @@ require'nvim-tree'.setup {
   hijack_netrw        = false,
   open_on_setup       = false,
   ignore_ft_on_setup  = {},
-  auto_close          = false,
   open_on_tab         = false,
   hijack_cursor       = false,
   update_cwd          = false,
-  update_to_buf_dir   = {
-    enable = true,
-    auto_open = true,
-  },
   diagnostics = {
     enable = false,
     icons = {
@@ -141,7 +112,6 @@ require'nvim-tree'.setup {
     height = 30,
     hide_root_folder = false,
     side = 'left',
-    auto_resize = false,
     mappings = {
       custom_only = false,
       list = {}
@@ -183,55 +153,131 @@ require'marks'.setup {
 
 
   -- Setup nvim-cmp.
-  local cmp = require'cmp'
 
-  cmp.setup({
-    snippet = {
-      -- REQUIRED - you must specify a snippet engine
-      expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-        -- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
-      end,
-    },
-    mapping = {
-      ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-      ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-      ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-      ['<C-e>'] = cmp.mapping({
-        i = cmp.mapping.abort(),
-        c = cmp.mapping.close(),
-      }),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    },
-    sources = cmp.config.sources({
-      { name = 'nvim_lsp' },
-      { name = 'vsnip' }, -- For vsnip users.
-      -- { name = 'luasnip' }, -- For luasnip users.
-      -- { name = 'ultisnips' }, -- For ultisnips users.
-      -- { name = 'snippy' }, -- For snippy users.
-    }, {
-      { name = 'buffer' },
-    })
-  })
+vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
 
-  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline('/', {
-    sources = {
-      { name = 'buffer' }
-    }
-  })
+require('luasnip.loaders.from_vscode').lazy_load()
 
-  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline(':', {
-    sources = cmp.config.sources({
-      { name = 'path' }
-    }, {
-      { name = 'cmdline' }
-    })
+local cmp = require('cmp')
+local luasnip = require('luasnip')
+
+local select_opts = {behavior = cmp.SelectBehavior.Select}
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end
+  },
+  sources = {
+    {name = 'path'},
+    {name = 'nvim_lsp', keyword_length = 1},
+    {name = 'buffer', keyword_length = 3},
+    {name = 'luasnip', keyword_length = 2},
+  },
+  window = {
+    documentation = cmp.config.window.bordered()
+  },
+  formatting = {
+    fields = {'menu', 'abbr', 'kind'},
+    format = function(entry, item)
+      local menu_icon = {
+        nvim_lsp = 'λ',
+        luasnip = '⋗',
+        buffer = 'Ω',
+        path = '🖫',
+      }
+
+      item.menu = menu_icon[entry.source.name]
+      return item
+    end,
+  },
+  mapping = {
+    ['<Up>'] = cmp.mapping.select_prev_item(select_opts),
+    ['<Down>'] = cmp.mapping.select_next_item(select_opts),
+
+    ['<C-p>'] = cmp.mapping.select_prev_item(select_opts),
+    ['<C-n>'] = cmp.mapping.select_next_item(select_opts),
+
+    ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({select = true}),
+
+    ['<C-d>'] = cmp.mapping(function(fallback)
+      if luasnip.jumpable(1) then
+        luasnip.jump(1)
+      else
+        fallback()
+      end
+    end, {'i', 's'}),
+
+    ['<C-b>'] = cmp.mapping(function(fallback)
+      if luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, {'i', 's'}),
+
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      local col = vim.fn.col('.') - 1
+
+      if cmp.visible() then
+        cmp.select_next_item(select_opts)
+      elseif col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+        fallback()
+      else
+        cmp.complete()
+      end
+    end, {'i', 's'}),
+
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item(select_opts)
+      else
+        fallback()
+      end
+    end, {'i', 's'}),
+  },
+})
+
+
+local sign = function(opts)
+  vim.fn.sign_define(opts.name, {
+    texthl = opts.name,
+    text = opts.text,
+    numhl = ''
   })
+end
+
+sign({name = 'DiagnosticSignError', text = '✘'})
+sign({name = 'DiagnosticSignWarn', text = '▲'})
+sign({name = 'DiagnosticSignHint', text = '⚑'})
+sign({name = 'DiagnosticSignInfo', text = ''})
+
+vim.diagnostic.config({
+  virtual_text = false,
+  severity_sort = true,
+  float = {
+    border = 'rounded',
+    source = 'always',
+    header = '',
+    prefix = '',
+  },
+})
+
+
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
+  vim.lsp.handlers.hover,
+  {border = 'rounded'}
+)
+
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+  vim.lsp.handlers.signature_help,
+  {border = 'rounded'}
+)
 
   -- Setup lspconfig.
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -345,7 +391,7 @@ lua << END
 require'lualine'.setup {
   options = {
     icons_enabled = true,
-    theme = 'nightfox',
+    theme = 'tokyonight',
     component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
     disabled_filetypes = {},
@@ -463,12 +509,14 @@ require("telescope").load_extension "file_browser"
 
 --require('nvim_comment').setup()
 
+vim.g.tokyonight_style = "storm"
+vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
+vim.g.tokyonight_transparent_sidebar = true
 EOF
-
-let g:tokyonight_transparent = 1
 
 colorscheme tokyonight
 
+let g:tokyonight_transparent = 1
 
 nnoremap <F10> <cmd>vertical resize +5<cr>
 nnoremap <F11> <cmd>cnext<cr>
@@ -534,12 +582,16 @@ set colorcolumn=120
 "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE " transparent bg
 let mapleader = " "
 
-"colorscheme gruvbox
 highlight Normal     ctermbg=NONE guibg=NONE
 highlight LineNr     ctermbg=NONE guibg=NONE
 highlight SignColumn ctermbg=NONE guibg=NONE
 
+
 lua <<EOF
+
+vim.g.tokyonight_transparent_sidebar = true
+vim.cmd("colorscheme tokyonight")
+
 require("transparent").setup({
   enable = true, -- boolean: enable transparent
   extra_groups = { -- table/string: additional groups that should be clear
@@ -570,17 +622,16 @@ if has('shada') " ignore /tmp and /mnt in shada history
 endif
 
 
-"colorscheme github_*
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 :set foldlevelstart=99
 let g:transparent_enabled = v:true
-" colorscheme nightfox
 " Git commit messages
 :autocmd FileType gitcommit set textwidth=72
 :autocmd FileType gitcommit set colorcolumn=51,73
 
 lua << EOF
+-- Default options
 local lspconfig = require("lspconfig")
 local null_ls = require("null-ls")
 local buf_map = function(bufnr, mode, lhs, rhs, opts)
