@@ -720,7 +720,7 @@ nnoremap <silent>    <A-0> <Cmd>BufferLast<CR>
 " Pin/unpin buffer
 nnoremap <silent>    <A-p> <Cmd>BufferPin<CR>
 " Close buffer
-nnoremap <silent>    <A-c> <Cmd>BufferClose<CR>
+nnoremap <silent>    <A-/> <Cmd>BufferClose<CR>
 " Wipeout buffer
 "                          :BufferWipeout
 " Close commands
@@ -750,7 +750,7 @@ let bufferline.icon_separator_inactive = '▎'
 let bufferline.icon_close_tab = ''
 let bufferline.icon_close_tab_modified = '●'
 let bufferline.icon_pinned = '車'
-let bufferline.maximum_padding = 2
+let bufferline.maximum_padding = 0
 let bufferline.icons = v:true
 
 lua <<EOF
