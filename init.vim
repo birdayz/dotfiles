@@ -1,4 +1,5 @@
 call plug#begin('~/.vim/plugged')
+Plug 'ahmedkhalf/project.nvim'
 Plug 'chentoast/marks.nvim'
 "Plug 'airblade/vim-rooter'
 Plug 'jose-elias-alvarez/null-ls.nvim'
@@ -75,6 +76,21 @@ set completeopt=menu,menuone,noselect
 "
 
 lua <<EOF
+require("nvim-tree").setup({
+  sync_root_with_cwd = true,
+  respect_buf_cwd = true,
+  update_focused_file = {
+    enable = true,
+    update_root = true
+  },
+})
+  require("project_nvim").setup {
+  manual_mode = true
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+require('telescope').load_extension('projects')
 
 -- following options are the default
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
@@ -110,7 +126,6 @@ require'nvim-tree'.setup {
   },
   view = {
     width = 30,
-    height = 30,
     hide_root_folder = false,
     side = 'left',
     mappings = {
@@ -280,23 +295,8 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
   {border = 'rounded'}
 )
 
-local lspconfig = require 'lspconfig'
-local configs = require 'lspconfig.configs'
-
-if not configs.golangcilsp then
- 	configs.golangcilsp = {
-		default_config = {
-			cmd = {'golangci-server'},
-			root_dir = lspconfig.util.root_pattern('.git', 'go.mod'),
-		};
-	}
-end
-lspconfig.golangcilsp.setup {
-	filetypes = {'go'}
-}
-
   -- Setup lspconfig.
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
   local golang_setup = {
     settings = {
@@ -541,7 +541,7 @@ nnoremap <F2> <cmd>Telescope oldfiles<cr>
 nnoremap <F1> <cmd>lua require 'telescope'.extensions.file_browser.file_browser()<CR>
 command! Filez execute (len(system('git rev-parse'))) ? ':Telescope find_files' : ':Telescope git_files'
 map <F3> :Filez<CR>
-map <F8> :lua require'telescope'.extensions.repo.cached_list{file_ignore_patterns={"/%.cache/", "/%.cargo/", "/%.vim/"}}<CR>
+map <F8> :Telescope projects<CR>
 nnoremap <F4> <cmd>Telescope lsp_document_symbols<cr>
 nnoremap <F5> <cmd>lua require('telescope.builtin').live_grep{ cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1] }<cr>
 nnoremap <F6> <cmd>NvimTreeToggle<cr>
@@ -703,6 +703,8 @@ null_ls.setup({
 })
 vim.o.updatetime = 250
 vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
+
 EOF
 let g:ale_linters = {
 \   'proto': ['buf-lint',],
