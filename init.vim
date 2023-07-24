@@ -1,7 +1,14 @@
 call plug#begin('~/.vim/plugged')
+Plug 'MunifTanjim/nui.nvim'
+Plug 'nvim-neo-tree/neo-tree.nvim'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'LudoPinelli/comment-box.nvim'
+Plug 'sindrets/diffview.nvim'
+Plug 'levouh/tint.nvim'
+Plug 'junegunn/goyo.vim'
 Plug 'ahmedkhalf/project.nvim'
 Plug 'chentoast/marks.nvim'
-"Plug 'airblade/vim-rooter'
+Plug 'toppair/reach.nvim'
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
@@ -60,6 +67,8 @@ Plug 'bufbuild/vim-buf'
 
 call plug#end()
 
+
+
 lua require('Comment').setup()
 
 let g:go_def_mode='gopls'
@@ -97,8 +106,8 @@ require('telescope').load_extension('projects')
 require'nvim-tree'.setup {
   disable_netrw       = false,
   hijack_netrw        = false,
-  open_on_setup       = false,
-  ignore_ft_on_setup  = {},
+  --open_on_setup       = false,
+  --ignore_ft_on_setup  = {},
   open_on_tab         = false,
   hijack_cursor       = false,
   update_cwd          = false,
@@ -273,28 +282,6 @@ sign({name = 'DiagnosticSignWarn', text = '▲'})
 sign({name = 'DiagnosticSignHint', text = '⚑'})
 sign({name = 'DiagnosticSignInfo', text = ''})
 
-vim.diagnostic.config({
-  virtual_text = false,
-  severity_sort = true,
-  float = {
-    border = 'rounded',
-    source = 'always',
-    header = '',
-    prefix = '',
-  },
-})
-
-
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
-  vim.lsp.handlers.hover,
-  {border = 'rounded'}
-)
-
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
-  vim.lsp.handlers.signature_help,
-  {border = 'rounded'}
-)
-
   -- Setup lspconfig.
   local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
@@ -458,7 +445,7 @@ require("nvim-treesitter.configs").setup {
     -- termcolors = {} -- table of colour name strings
   },
   indent = {
-    enable = false
+    enable = true,
   },
   highlight = {
     enable = true,
@@ -480,14 +467,21 @@ require'hop'.setup()
 local actions = require("telescope.actions")
 require('telescope').setup {
   pickers = {
+    lsp_document_symbols = {
+      theme = "ivy",
+      fname_width = 500
+    },
     find_files = {
       hidden = true
     },
     git_files = {
       git_command = { "git", "ls-files", "--exclude-standard", "--cached", "--deduplicate" },
+      previewer = false
     },
     oldfiles = {
-        theme = "ivy"
+      sorter = require("telescope.sorters").fuzzy_with_index_bias(),
+      theme = "ivy",
+      previewer = false
     },
   },
   extensions = {
@@ -504,6 +498,18 @@ require('telescope').setup {
     },
   },
   defaults = {
+    vimgrep_arguments = {
+      'rg',
+      '--hidden',
+      '--color=never',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case',
+      '-u' -- thats the new thing
+    },
+    layout_config = { height = 0.95 },
     path_display = function(opts, path)
               return string.gsub(path,os.getenv("HOME"),"~")
             end,
@@ -585,9 +591,9 @@ let g:asyncrun_open = 8
 set nohlsearch
 set hidden
 set noerrorbells
-" set nowrap
-set tw=80
+set wrap
 set noswapfile
+set textwidth=0
 set nobackup
 set undodir=~/.vim/undodir
 set undofile
@@ -609,7 +615,6 @@ vim.g.tokyonight_transparent_sidebar = true
 vim.cmd("colorscheme tokyonight")
 
 require("transparent").setup({
-  enable = true, -- boolean: enable transparent
   extra_groups = { -- table/string: additional groups that should be clear
     -- In particular, when you set it to 'all', that means all avaliable groups
 
@@ -621,7 +626,7 @@ require("transparent").setup({
     "BufferLineSeparator",
     "BufferLineIndicatorSelected",
   },
-  exclude = {}, -- table: groups you don't want to clear
+  exclude_groups = {}, -- table: groups you don't want to clear
 })
 local saga = require 'lspsaga'
 saga.init_lsp_saga()
@@ -702,7 +707,7 @@ null_ls.setup({
     on_attach = on_attach,
 })
 vim.o.updatetime = 250
-vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+--vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
 
 
 EOF
@@ -758,14 +763,18 @@ nnoremap <silent> <Space>bw <Cmd>BufferOrderByWindowNumber<CR>
 " :BarbarEnable - enables barbar (enabled by default)
 " :BarbarDisable - very bad command, should never be used
 
-let bufferline = get(g:, 'bufferline', {})
-let bufferline.animation = v:true
-let bufferline.closable = v:false
-let bufferline.tabpages = v:true
-let bufferline.icon_separator_active = '▎'
-let bufferline.icon_separator_inactive = '▎'
-let bufferline.icon_close_tab = ''
-let bufferline.icon_close_tab_modified = '●'
-let bufferline.icon_pinned = '車'
-let bufferline.maximum_padding = 0
-let bufferline.icons = v:true
+
+lua << EOF
+require('reach').setup()
+EOF
+
+command! Scratch new | setlocal bt=nofile bh=wipe nobl noswapfile nu
+
+set hlsearch
+
+let g:barbar_auto_setup = v:false " disable auto-setup
+lua << EOF
+  require'barbar'.setup {
+
+  }
+EOF
