@@ -9,7 +9,6 @@ Plug 'junegunn/goyo.vim'
 Plug 'ahmedkhalf/project.nvim'
 Plug 'chentoast/marks.nvim'
 Plug 'toppair/reach.nvim'
-Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'EdenEast/nightfox.nvim'
@@ -47,7 +46,7 @@ Plug 'numToStr/Comment.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'sheerun/vim-polyglot'
-Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
+Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary!' }
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'romgrk/barbar.nvim'
@@ -137,10 +136,6 @@ require'nvim-tree'.setup {
     width = 30,
     hide_root_folder = false,
     side = 'left',
-    mappings = {
-      custom_only = false,
-      list = {}
-    }
   }
 }
 
@@ -299,16 +294,6 @@ sign({name = 'DiagnosticSignInfo', text = ''})
 
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
---Enable (broadcasting) snippet capability for completion
-local capabilitiesHtml = vim.lsp.protocol.make_client_capabilities()
-capabilitiesHtml.textDocument.completion.completionItem.snippetSupport = true
-
-require'lspconfig'.html.setup {
-  capabilities = capabilitiesHtml,
-}
-
-require'lspconfig'.html.setup{}
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
@@ -654,7 +639,6 @@ let g:transparent_enabled = v:true
 lua << EOF
 -- Default options
 local lspconfig = require("lspconfig")
-local null_ls = require("null-ls")
 local buf_map = function(bufnr, mode, lhs, rhs, opts)
     vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts or {
         silent = true,
@@ -698,13 +682,6 @@ lspconfig.tsserver.setup({
         buf_map(bufnr, "n", "go", ":TSLspImportAll<CR>")
         on_attach(client, bufnr)
     end,
-})
-null_ls.setup({
-    sources = {
-        null_ls.builtins.diagnostics.eslint,
-        null_ls.builtins.code_actions.eslint,
-    },
-    on_attach = on_attach,
 })
 vim.o.updatetime = 250
 --vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
@@ -778,3 +755,5 @@ lua << EOF
 
   }
 EOF
+
+set clipboard+=unnamedplus
