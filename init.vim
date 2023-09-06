@@ -2,7 +2,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'MunifTanjim/nui.nvim'
 Plug 'nvim-neo-tree/neo-tree.nvim'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'LudoPinelli/comment-box.nvim'
 Plug 'sindrets/diffview.nvim'
 Plug 'levouh/tint.nvim'
 Plug 'junegunn/goyo.vim'
@@ -11,19 +10,15 @@ Plug 'chentoast/marks.nvim'
 Plug 'toppair/reach.nvim'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
-Plug 'EdenEast/nightfox.nvim'
 Plug 'sbdchd/neoformat'
 Plug 'projekt0n/github-nvim-theme'
 Plug 'xiyaowong/nvim-transparent'
-Plug 'rfratto/vim-go-testify'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-telescope/telescope-file-browser.nvim'
-Plug 'tami5/sqlite.lua'
 Plug 'tami5/lspsaga.nvim', {'branch': 'main'}
 Plug 'moll/vim-bbye' " optional dependency
 Plug 'aymericbeaumet/vim-symlink'
 Plug 'gruvbox-community/gruvbox'
-Plug 'ggandor/lightspeed.nvim'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'neovim/nvim-lspconfig'
@@ -32,31 +27,22 @@ Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
-Plug 'skywind3000/asyncrun.vim'
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'cljoly/telescope-repo.nvim'
-Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
-Plug 'fatih/vim-go'
-Plug 'dstein64/nvim-scrollview'
+"Plug 'fatih/vim-go'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update - also run TSInstall go
-Plug 'numToStr/Comment.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'sheerun/vim-polyglot'
 Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary!' }
 Plug 'nvim-lualine/lualine.nvim'
-Plug 'kyazdani42/nvim-web-devicons'
 Plug 'romgrk/barbar.nvim'
-Plug 'p00f/nvim-ts-rainbow'
+"Plug 'p00f/nvim-ts-rainbow'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
-Plug 'phaazon/hop.nvim'
-Plug 'jreybert/vimagit'
+"Plug 'jreybert/vimagit'
 Plug 'ray-x/lsp_signature.nvim'
-Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 Plug 'ibhagwan/fzf-lua'
 Plug 'vijaymarupudi/nvim-fzf'
@@ -67,8 +53,6 @@ Plug 'bufbuild/vim-buf'
 call plug#end()
 
 
-
-lua require('Comment').setup()
 
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
@@ -445,8 +429,6 @@ map('n', '<F9>', "<cmd>lua require'telescope'.extensions.file_browser.file_brows
 EOF
 
 lua <<EOF
-require'hop'.setup()
-
 -- You dont need to set any of these options. These are the default ones. Only
 -- the loading is important
 local actions = require("telescope.actions")
@@ -521,7 +503,7 @@ vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
 vim.g.tokyonight_transparent_sidebar = true
 EOF
 
-colorscheme tokyonight
+colorscheme gruvbox
 
 let g:tokyonight_transparent = 1
 
@@ -596,9 +578,6 @@ highlight SignColumn ctermbg=NONE guibg=NONE
 
 lua <<EOF
 
-vim.g.tokyonight_transparent_sidebar = true
-vim.cmd("colorscheme tokyonight")
-
 require("transparent").setup({
   extra_groups = { -- table/string: additional groups that should be clear
     -- In particular, when you set it to 'all', that means all avaliable groups
@@ -657,7 +636,7 @@ local on_attach = function(client, bufnr)
     vim.cmd("command! LspDiagNext lua vim.diagnostic.goto_next()")
     vim.cmd("command! LspDiagLine lua vim.diagnostic.open_float()")
     vim.cmd("command! LspSignatureHelp lua vim.lsp.buf.signature_help()")
-    buf_map(bufnr, "n", "gd", ":LspDef<CR>")
+    -- buf_map(bufnr, "n", "gd", ":LspDef<CR>")
     buf_map(bufnr, "n", "gr", ":LspRename<CR>")
     buf_map(bufnr, "n", "gy", ":LspTypeDef<CR>")
     buf_map(bufnr, "n", "K", ":LspHover<CR>")
@@ -672,11 +651,14 @@ local on_attach = function(client, bufnr)
 end
 lspconfig.tsserver.setup({
     on_attach = function(client, bufnr)
+
+        buf_map(bufnr, "n", "gd", ":lua vim.lsp.buf.definition()<CR>")
         client.resolved_capabilities.document_formatting = false
         client.resolved_capabilities.document_range_formatting = false
         local ts_utils = require("nvim-lsp-ts-utils")
         ts_utils.setup({})
         ts_utils.setup_client(client)
+        buf_map(bufnr, "n", "gd", ":lua vim.lsp.buf.definition()<CR>")
         buf_map(bufnr, "n", "gs", ":TSLspOrganize<CR>")
         buf_map(bufnr, "n", "gi", ":TSLspRenameFile<CR>")
         buf_map(bufnr, "n", "go", ":TSLspImportAll<CR>")
