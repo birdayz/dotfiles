@@ -4,15 +4,15 @@ window:
 font:
   size: 9.5
   normal:
-    family: DejaVu Sans Mono
+    family: SauceCodeProNerdFont
     style: Regular
 
   bold:
-    family: DejaVu Sans Mono
+    family: Source Code Pro
     style: Bold
 
   italic:
-    family: DejaVu Sans Mono
+    family: Source Code Pro
     style: Italic
 
 scrolling:
