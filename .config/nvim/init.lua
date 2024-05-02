@@ -12,9 +12,23 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+	"almo7aya/openingh.nvim",
 	"mattn/vim-goimports",
 	"nvim-lua/plenary.nvim",
-  "nvim-treesitter/nvim-treesitter",
+	{
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function () 
+      local configs = require("nvim-treesitter.configs")
+
+      configs.setup({
+          ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "html" },
+          sync_install = false,
+          highlight = { enable = true },
+          indent = { enable = true },  
+        })
+    end
+ 	},
   "neovim/nvim-lspconfig",
   "folke/tokyonight.nvim",
 	"hrsh7th/cmp-nvim-lsp",
@@ -139,7 +153,7 @@ vim.cmd[[command! Filez execute (len(system('git rev-parse'))) ? ':Telescope fin
 vim.cmd[[map <F3> :Filez<CR>]]
 vim.cmd[[map <F8> :Telescope projects<CR>]]
 vim.cmd[[nnoremap <F4> <cmd>Telescope lsp_document_symbols<cr>]]
-vim.cmd[[nnoremap <F5> <cmd>lua require('telescope.builtin').live_grep{ cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1] }<cr>]]
+vim.cmd[[nnoremap <F5> <cmd>lua require('telescope.builtin').live_grep{ file_ignore_patterns = {".git/", ".cache", "%.o", "%.a", "%.out", "%.class", "%.pdf", "%.mkv", "%.mp4", "%.zip"}, cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1] }<cr>]]
 vim.cmd[[nnoremap <F6> <cmd>Neotree toggle<cr>]]
 vim.cmd[[nnoremap <leader>fg <cmd>Telescope live_grep<cr>]]
 vim.cmd[[nnoremap <leader>fb <cmd>Telescope buffers<cr>]]
@@ -267,6 +281,7 @@ require 'window-picker'.setup({
 })
 --vim.cmd[[set scrolloff=999]]
 vim.cmd[[set number]]
+vim.cmd[[set expandtab]]
 vim.cmd[[autocmd FileType fugitive nmap <buffer> q gq]]
 
 vim.cmd[[nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>]]
