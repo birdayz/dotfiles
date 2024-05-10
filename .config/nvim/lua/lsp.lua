@@ -109,3 +109,5 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp
 require'lspconfig'.gopls.setup {capabilities = capabilities}
 --vim.cmd [[autocmd BufWritePre *.go :silent! lua vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } }, apply = true })]]
 vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc')
+
+require'lspconfig'.bufls.setup{}
