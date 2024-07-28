@@ -1,4 +1,5 @@
 require'nvim-treesitter.configs'.setup {
+  parser_install_dir = "$HOME/.cache/treesitter/parsers",
   highlight = {
     enable = true,
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
@@ -12,3 +13,4 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 
+vim.opt.runtimepath:append("$HOME/.cache/treesitter/parsers")
