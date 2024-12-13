@@ -22,7 +22,7 @@ require("lazy").setup({
       local configs = require("nvim-treesitter.configs")
 
       configs.setup({
-          ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "html" },
+          ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "html", "hcl", "terraform" },
           sync_install = false,
           highlight = { enable = true },
           indent = { enable = true },  
@@ -80,7 +80,7 @@ require("lazy").setup({
   	opts = {},
   	config = function(_, opts) require'lsp_signature'.setup(opts) end
 	},
-	"nvim-telescope/telescope.nvim",
+  {"nvim-telescope/telescope.nvim",tag = '0.1.7'},
 	{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' },
 	{
     "nvim-telescope/telescope-file-browser.nvim",
@@ -152,7 +152,7 @@ vim.keymap.set("n", "<F1>", ":Telescope file_browser path=%:p:h select_buffer=tr
 vim.cmd[[command! Filez execute (len(system('git rev-parse'))) ? ':Telescope find_files' : ':Telescope git_files']]
 vim.cmd[[map <F3> :Filez<CR>]]
 vim.cmd[[map <F8> :Telescope projects<CR>]]
-vim.cmd[[nnoremap <F4> <cmd>Telescope lsp_document_symbols<cr>]]
+vim.cmd[[nnoremap <F4> <cmd>lua require('telescope.builtin').lsp_document_symbols({fname_width = 160,show_line=false,symbol_width=70})<cr>]]
 vim.cmd[[nnoremap <F5> <cmd>lua require('telescope.builtin').live_grep{ file_ignore_patterns = {"node_modules/", ".git/", ".cache", "%.o", "%.a", "%.out", "%.class", "%.pdf", "%.mkv", "%.mp4", "%.zip"}, cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1] }<cr>]]
 vim.cmd[[nnoremap <F6> <cmd>Neotree toggle<cr>]]
 vim.cmd[[nnoremap <leader>fg <cmd>Telescope live_grep<cr>]]
