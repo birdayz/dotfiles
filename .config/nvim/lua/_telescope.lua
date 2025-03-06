@@ -25,7 +25,7 @@ require('telescope').setup {
   extensions = {
     file_browser = {
       hidden = true,
-      respect_gitignore = true
+      respect_gitignore = false
     },
     fzf = {
       fuzzy = true,                    -- false will only do exact matching
