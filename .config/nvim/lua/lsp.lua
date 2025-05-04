@@ -50,18 +50,47 @@ vim.cmd [[set nofoldenable]]
 local cmp = require 'cmp'
 
 cmp.setup({
-    snippet = {
-        -- REQUIRED - you must specify a snippet engine
-        expand = function(args)
-            -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-            require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-            -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-            -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-        end
+  completion = {
+    autocomplete = { require('cmp.types').cmp.TriggerEvent.TextChanged },
+    completeopt = 'menu,menuone,noselect',
+    keyword_length = 1,  -- Start suggesting after 1 character
+  },
+matching = {
+    disallow_fuzzy_matching = true,
+    disallow_partial_fuzzy_matching = true,
+    disallow_partial_matching = true,
+    disallow_prefix_unmatching = true,
+  },
+  sorting = {
+    priority_weight = 2,
+    comparators = {
+      cmp.config.compare.exact,
+      cmp.config.compare.score,
+      cmp.config.compare.offset,
+      cmp.config.compare.recently_used,
+      cmp.config.compare.kind,
+      cmp.config.compare.sort_text,
+      cmp.config.compare.length,
+      cmp.config.compare.order,
     },
+  },
+  performance = {
+    debounce = 20,         -- ms to wait after keystroke before triggering completion
+    throttle = 20,         -- ms to wait before triggering completion again
+    fetching_timeout = 100 -- timeout for LSP responses
+  },
+    -- snippet = {
+    --     -- REQUIRED - you must specify a snippet engine
+    --     expand = function(args)
+    --         -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+    --         require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+    --         -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+    --         -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+    --     end
+    -- },
     window = {
-        -- completion = cmp.config.window.bordered(),
-        -- documentation = cmp.config.window.bordered(),
+         completion = cmp.config.window.bordered(),
+         documentation = cmp.config.window.bordered(),
     },
     mapping = cmp.mapping.preset.insert({
         ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -100,13 +129,52 @@ cmp.setup.cmdline(':', {
 })
 
 -- Set up lspconfig.
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp
                                                                       .protocol
                                                                       .make_client_capabilities())
 
-require'lspconfig'.gopls.setup {capabilities = capabilities}
+
+require('lspconfig').gopls.setup({
+  cmd = {"gopls", "-remote=localhost:37373"},
+  flags = {
+    debounce_text_changes = 50,  -- Lowered from default 150ms to 50ms
+  },
+  settings = {
+    gopls = {
+      --memoryMode = "DegradeClosed",  -- or "DegradeAll" if you’re RAM-starved
+      analyses = {
+        unusedparams = false,
+        unreachable = false,
+      },
+      matcher = "fuzzy", -- fastest matching mode
+      completionBudget = "200ms", -- 2 full seconds for giant completion requests
+      deepCompletion = true, -- complete deeply inside nested structs
+      matcher = "fuzzy", -- fastest matching mode
+      experimentalPostfixCompletions = true,
+      staticcheck = false,
+      buildFlags = { "-tags=integration" },
+      directoryFilters = {
+        "-.git",
+        "-node_modules",
+        "-apps/cloud-ui",
+        "-apps/admin-ui",
+        "-vendor",
+        "-bazel-out",
+        "-.build"
+      },
+      codelenses = {
+        generate = false,
+        gc_details = false,
+        test = false,
+        tidy = false,
+        upgrade_dependency = false,
+        vendor = false,
+      },
+      ["ui.completion.usePlaceholders"] = true,
+    }
+  }
+})
+--require'lspconfig'.gopls.setup {capabilities = capabilities}
 --vim.cmd [[autocmd BufWritePre *.go :silent! lua vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } }, apply = true })]]
 vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc')
 
