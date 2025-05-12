@@ -34,6 +34,25 @@ require("lazy").setup({
 			})
 		end,
 	},
+	{
+		"nvimdev/lspsaga.nvim",
+		config = function()
+			require("lspsaga").setup({
+				implement = {
+					enable = true,
+				},
+				ui = {
+					code_action = "",
+					enable = true,
+					virtual_text = true,
+				},
+			})
+		end,
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter", -- optional
+			"nvim-tree/nvim-web-devicons", -- optional
+		},
+	},
 	"neovim/nvim-lspconfig",
 	"hrsh7th/cmp-nvim-lsp-signature-help",
 	"folke/tokyonight.nvim",
@@ -173,3 +192,8 @@ endfunction
 vim.cmd([[nnoremap <silent> <F7> :call ToggleQuickFix()<cr>]])
 vim.cmd([[set signcolumn=no]])
 vim.opt.mouse = ""
+
+vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.cmd([[set foldmethod=expr]])
+vim.opt.foldlevel = 99

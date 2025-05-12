@@ -42,9 +42,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 --vim.cmd [[autocmd BufWritePre *.go lua vim.lsp.buf.format()]]
-vim.cmd [[set foldmethod=expr]]
-vim.cmd [[set foldexpr=nvim_treesitter#foldexpr()]]
-vim.cmd [[set nofoldenable]]
 
 -- Set up nvim-cmp.
 local cmp = require 'cmp'
