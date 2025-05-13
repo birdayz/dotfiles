@@ -218,3 +218,27 @@ require'lspconfig'.buf_ls.setup{}
 --     end
 --   end,
 -- })
+--
+
+
+require('lspconfig').pyright.setup({
+  on_attach = function(client, bufnr)
+    -- your custom keybindings or settings, e.g.:
+    local buf_map = function(mode, lhs, rhs)
+      vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, { noremap=true, silent=true })
+    end
+
+    buf_map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>')
+    buf_map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
+    -- etc.
+  end,
+  settings = {
+    python = {
+      analysis = {
+        typeCheckingMode = "basic", -- or "strict"
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+      }
+    }
+  }
+})

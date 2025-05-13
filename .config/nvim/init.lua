@@ -56,6 +56,22 @@ require("lazy").setup({
 	"neovim/nvim-lspconfig",
 	"hrsh7th/cmp-nvim-lsp-signature-help",
 	"folke/tokyonight.nvim",
+	{
+		"ahmedkhalf/project.nvim",
+		event = "VeryLazy",
+		config = function()
+			require("project_nvim").setup({
+				-- Recommended settings
+				detection_methods = { "pattern", "lsp" },
+				patterns = { ".git", "Makefile", "package.json", "pyproject.toml" },
+				show_hidden = true,
+			})
+			require("telescope").load_extension("projects")
+		end,
+		keys = {
+			{ "<leader>fp", "<cmd>Telescope projects<cr>", desc = "Projects" },
+		},
+	},
 	"hrsh7th/cmp-nvim-lsp",
 	"hrsh7th/cmp-buffer",
 	"hrsh7th/cmp-path",

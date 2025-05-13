@@ -47,6 +47,8 @@ require('telescope').setup {
       '--smart-case',
       '-u' -- thats the new thing
     },
+    find_command = { "fd", "--type", "f", "--strip-cwd-prefix" },
+    file_ignore_patterns = { ".git/", "node_modules/", "dist/", "%.lock" },
     layout_config = { height = 0.95 },
     path_display = function(opts, path)
               return string.gsub(path,os.getenv("HOME"),"~")
@@ -65,3 +67,4 @@ require('telescope').setup {
 -- load_extension, somewhere after setup function:
 require('telescope').load_extension('fzf')
 require("telescope").load_extension "file_browser"
+require("telescope").load_extension "projects"
