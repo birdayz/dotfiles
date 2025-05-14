@@ -74,7 +74,7 @@ matching = {
   performance = {
     debounce = 20,         -- ms to wait after keystroke before triggering completion
     throttle = 20,         -- ms to wait before triggering completion again
-    fetching_timeout = 100 -- timeout for LSP responses
+    fetching_timeout = 50 -- timeout for LSP responses
   },
     -- snippet = {
     --     -- REQUIRED - you must specify a snippet engine
