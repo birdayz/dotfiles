@@ -176,6 +176,7 @@ require('lspconfig').gopls.setup({
 vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc')
 
 require'lspconfig'.buf_ls.setup{}
+require'lspconfig'.terraformls.setup{}
 
 -- local golang_organize_imports = function(bufnr, isPreflight)
 --   local params = vim.lsp.util.make_range_params(nil, vim.lsp.util._get_offset_encoding(bufnr))
