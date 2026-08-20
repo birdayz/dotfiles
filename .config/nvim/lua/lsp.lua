@@ -1,8 +1,8 @@
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end)
+vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end)
 vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
 
 -- Use LspAttach autocommand to only map the following keys
@@ -29,7 +29,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end, opts)
         vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
         vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-        vim.keymap.set({'n', 'v'}, '<space>ca', ':Lspsaga code_action<CR>', opts)
+        vim.keymap.set({'n', 'v'}, '<space>ca', vim.lsp.buf.code_action, opts)
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
         vim.keymap.set('n', '<space>f',
                        function() 
@@ -76,15 +76,13 @@ matching = {
     throttle = 20,         -- ms to wait before triggering completion again
     fetching_timeout = 50 -- timeout for LSP responses
   },
-    -- snippet = {
-    --     -- REQUIRED - you must specify a snippet engine
-    --     expand = function(args)
-    --         -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-    --         require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-    --         -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-    --         -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-    --     end
-    -- },
+    -- REQUIRED: without this, confirming any LSP snippet completion (gopls
+    -- sends them, usePlaceholders=true) errors out or inserts raw ${1:...}.
+    snippet = {
+        expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+        end
+    },
     window = {
          completion = cmp.config.window.bordered(),
          documentation = cmp.config.window.bordered(),
@@ -131,22 +129,26 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp
                                                                       .make_client_capabilities())
 
 
-require('lspconfig').gopls.setup({
-  cmd = {"gopls", "-remote=localhost:37373"},
+vim.lsp.config.gopls = {
+  -- -remote=auto: share one gopls daemon across nvim instances, auto-starting
+  -- it if absent. A literal host:port only *dials* -- it never spawns a
+  -- daemon, so gopls died with exit 2 whenever nothing was listening.
+  cmd = {"gopls", "-remote=auto"},
+  filetypes = {"go", "gomod", "gowork", "gotmpl"},
+  root_markers = {"go.mod", ".git"},
+  capabilities = capabilities,
   flags = {
     debounce_text_changes = 50,  -- Lowered from default 150ms to 50ms
   },
   settings = {
     gopls = {
-      --memoryMode = "DegradeClosed",  -- or "DegradeAll" if you’re RAM-starved
+      --memoryMode = "DegradeClosed",  -- or "DegradeAll" if you're RAM-starved
       analyses = {
         unusedparams = false,
         unreachable = false,
       },
-      matcher = "fuzzy", -- fastest matching mode
-      completionBudget = "200ms", -- 2 full seconds for giant completion requests
-      deepCompletion = true, -- complete deeply inside nested structs
-      matcher = "fuzzy", -- fastest matching mode
+      matcher = "fuzzy",
+      completionBudget = "200ms", -- cap per completion request
       experimentalPostfixCompletions = true,
       staticcheck = false,
       buildFlags = { "-tags=integration" },
@@ -167,16 +169,49 @@ require('lspconfig').gopls.setup({
         upgrade_dependency = false,
         vendor = false,
       },
-      ["ui.completion.usePlaceholders"] = true,
+      usePlaceholders = true, -- gopls takes the flat name, not the dotted path
     }
   }
-})
---require'lspconfig'.gopls.setup {capabilities = capabilities}
---vim.cmd [[autocmd BufWritePre *.go :silent! lua vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } }, apply = true })]]
-vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc')
+}
+vim.lsp.enable('gopls')
 
-require'lspconfig'.buf_ls.setup{}
-require'lspconfig'.terraformls.setup{}
+vim.lsp.config.buf_ls = {
+  cmd = {"buf", "language-server"},
+  filetypes = {"proto"},
+  root_markers = {".git"},
+}
+vim.lsp.enable('buf_ls')
+
+-- terraform-ls. cmd/filetypes/root_markers come from nvim-lspconfig.
+vim.lsp.config.terraformls = {
+  capabilities = capabilities,
+}
+vim.lsp.enable('terraformls')
+
+-- rust-analyzer. cmd/filetypes/root_dir come from nvim-lspconfig's
+-- lsp/rust_analyzer.lua (it resolves the cargo *workspace* root via
+-- `cargo metadata`, not the nearest Cargo.toml) -- only deltas here.
+vim.lsp.config.rust_analyzer = {
+  capabilities = capabilities,
+  settings = {
+    ["rust-analyzer"] = {
+      cargo = {
+        allTargets = true,       -- analyse tests/benches/examples too
+        buildScripts = { enable = true },
+      },
+      check = {
+        command = "clippy",
+        extraArgs = { "--all-targets" },
+      },
+      procMacro = { enable = true },
+      inlayHints = {
+        parameterHints = { enable = false },
+        typeHints = { enable = true },
+      },
+    },
+  },
+}
+vim.lsp.enable('rust_analyzer')
 
 -- local golang_organize_imports = function(bufnr, isPreflight)
 --   local params = vim.lsp.util.make_range_params(nil, vim.lsp.util._get_offset_encoding(bufnr))
@@ -222,7 +257,11 @@ require'lspconfig'.terraformls.setup{}
 --
 
 
-require('lspconfig').pyright.setup({
+vim.lsp.config.pyright = {
+  cmd = {"pyright-langserver", "--stdio"},
+  filetypes = {"python"},
+  root_markers = {"pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", ".git"},
+  capabilities = capabilities,
   on_attach = function(client, bufnr)
     -- your custom keybindings or settings, e.g.:
     local buf_map = function(mode, lhs, rhs)
@@ -242,4 +281,5 @@ require('lspconfig').pyright.setup({
       }
     }
   }
-})
+}
+vim.lsp.enable('pyright')

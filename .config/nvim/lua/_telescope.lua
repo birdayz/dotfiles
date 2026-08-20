@@ -1,7 +1,6 @@
 -- You dont need to set any of these options. These are the default ones. Only
 -- the loading is important
 local actions = require("telescope.actions")
-local utils = require("telescope.utils")
 require('telescope').setup {
   pickers = {
     lsp_document_symbols = {
@@ -10,7 +9,8 @@ require('telescope').setup {
     },
     find_files = {
       hidden = true,
-			cwd = utils.buffer_dir()
+      -- NOTE: do NOT set cwd here -- it is evaluated once at setup time and
+      -- would pin find_files to the startup buffer's dir forever.
     },
     git_files = {
       git_command = { "git", "ls-files", "--exclude-standard", "--cached", "--deduplicate" },
@@ -19,7 +19,7 @@ require('telescope').setup {
     oldfiles = {
       sorter = require("telescope.sorters").fuzzy_with_index_bias(),
       theme = "ivy",
-      previewer = false
+      previewer = false,
     },
   },
   extensions = {
@@ -50,9 +50,12 @@ require('telescope').setup {
     find_command = { "fd", "--type", "f", "--strip-cwd-prefix" },
     file_ignore_patterns = { ".git/", "node_modules/", "dist/", "%.lock" },
     layout_config = { height = 0.95 },
-    path_display = function(opts, path)
-              return string.gsub(path,os.getenv("HOME"),"~")
-            end,
+    path_display = function(_, path)
+      -- NOTE: must return exactly ONE value. gsub returns (str, count) and
+      -- telescope now reads the 2nd return as a highlight-style table.
+      local shortened = path:gsub("^" .. vim.pesc(os.getenv("HOME")), "~")
+      return shortened
+    end,
     mappings = {
       i = {
         ["<esc>"] = actions.close,

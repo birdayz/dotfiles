@@ -1,5 +1,5 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
 		"clone",
@@ -16,42 +16,37 @@ require("lazy").setup({
 	"mattn/vim-goimports",
 	"nvim-lua/plenary.nvim",
 	{
+		dir = "/home/birdy/projects/nvim-ai",
+		name = "nvim-ai",
+		build = "go install .",
+		lazy = false,
+		config = function()
+			require('nvim-ai').setup()
+		end,
+		keys = {
+			{ "<F6>", ":AIAssistant<CR>", desc = "AI Assistant" },
+			{ "<leader>ai", ":AIAssistant<CR>", desc = "AI Assistant" },
+		},
+	},
+	{
 		"scottmckendry/cyberdream.nvim",
 		lazy = false,
 		priority = 1000,
 	},
 	{
-		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
-		config = function()
-			local configs = require("nvim-treesitter.configs")
-
-			configs.setup({
-				ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "html", "hcl", "terraform" },
-				sync_install = false,
-				highlight = { enable = true },
-				indent = { enable = true },
-			})
-		end,
+		"MeanderingProgrammer/render-markdown.nvim",
+		ft = { "markdown" },
+		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+		opts = {},
 	},
 	{
-		"nvimdev/lspsaga.nvim",
-		config = function()
-			require("lspsaga").setup({
-				implement = {
-					enable = true,
-				},
-				ui = {
-					code_action = "",
-					enable = true,
-					virtual_text = true,
-				},
-			})
-		end,
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter", -- optional
-			"nvim-tree/nvim-web-devicons", -- optional
-		},
+		-- `main` branch: full rewrite, requires nvim >= 0.12 and the tree-sitter CLI.
+		-- Does NOT support lazy-loading, hence lazy = false.
+		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		lazy = false,
+		build = ":TSUpdate",
+		-- Actual setup lives in lua/treesitter.lua (required below).
 	},
 	"neovim/nvim-lspconfig",
 	"hrsh7th/cmp-nvim-lsp-signature-help",
@@ -87,7 +82,6 @@ require("lazy").setup({
 				options = {
 					theme = "auto",
 					icons_enabled = true,
-					theme = "tokyonight",
 					component_separators = { left = "", right = "" },
 					section_separators = { left = "", right = "" },
 					disabled_filetypes = {},
@@ -96,7 +90,7 @@ require("lazy").setup({
 				sections = {
 					lualine_x = {
 						function()
-							local clients = vim.lsp.get_active_clients({ bufnr = 0 })
+							local clients = vim.lsp.get_clients({ bufnr = 0 })
 							if #clients > 0 then
 								return "LSP"
 							end
@@ -110,7 +104,8 @@ require("lazy").setup({
 							"filename",
 							path = 1, -- 1 = relative path; 2 = absolute
 							fmt = function(str)
-								return str:gsub(vim.env.HOME, "~")
+								local short = str:gsub(vim.env.HOME, "~")
+								return short -- gsub returns (str, count); return one value
 							end,
 						},
 					},
@@ -133,7 +128,7 @@ require("lazy").setup({
 			require("alpha").setup(require("alpha.themes.startify").config)
 		end,
 	},
-	{ "nvim-telescope/telescope.nvim", tag = "0.1.7" },
+	{ "nvim-telescope/telescope.nvim", branch = "master" },
 	{
 		"nvim-telescope/telescope-fzf-native.nvim",
 		build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
@@ -147,7 +142,6 @@ require("lazy").setup({
 vim.cmd([[set tabstop=2]])
 vim.cmd([[set shiftwidth=2]])
 vim.cmd([[colorscheme cyberdream]])
-vim.cmd([[set mouse=]])
 
 -- Automatically use correct indentation when pressing i on empty line
 vim.cmd([[function! IndentWithI()
@@ -167,6 +161,9 @@ vim.cmd([[set undodir=~/.vim/undodir]])
 vim.cmd([[set undofile]])
 vim.cmd([[set clipboard+=unnamedplus]])
 
+-- Limit oldfiles to prevent hangs
+vim.o.shada = "!,'20,<50,s10,h"
+
 -- Hotkeys
 vim.cmd([[nnoremap <F10> <cmd>vertical resize +5<cr>]])
 vim.cmd([[nnoremap <F11> <cmd>cnext<cr>]])
@@ -182,18 +179,15 @@ vim.cmd(
 vim.cmd(
 	[[nnoremap <F5> <cmd>lua require('telescope.builtin').live_grep{ file_ignore_patterns = {"node_modules/", ".git/", ".cache", "%.o", "%.a", "%.out", "%.class", "%.pdf", "%.mkv", "%.mp4", "%.zip"}, cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1] }<cr>]]
 )
-vim.cmd([[nnoremap <F6> <cmd>Neotree toggle<cr>]])
 vim.cmd([[nnoremap <leader>fg <cmd>Telescope live_grep<cr>]])
 vim.cmd([[nnoremap <leader>fb <cmd>Telescope buffers<cr>]])
 vim.cmd([[nnoremap <leader>fh <cmd>Telescope help_tags<cr>]])
-vim.cmd([[nnoremap <leader>p <cmd>lua require('window-picker').pick_window()<CR>]])
 
 vim.cmd([[set number]])
 vim.cmd([[set expandtab]])
 vim.cmd([[autocmd FileType fugitive nmap <buffer> q gq]])
 vim.cmd("highlight Pmenu guibg=NONE")
 vim.api.nvim_set_hl(0, "PmenuBorder", { fg = "grey" })
-vim.cmd([[nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>]])
 vim.cmd([[nnoremap <silent> g? <cmd>lua vim.diagnostic.open_float()<CR>]])
 vim.cmd([[set updatetime=100]])
 vim.cmd([[
@@ -213,3 +207,4 @@ vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.cmd([[set foldmethod=expr]])
 vim.opt.foldlevel = 99
+
