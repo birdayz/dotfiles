@@ -1,0 +1,36 @@
+* {
+    font-family: monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background: #323232;
+    color: #ffffff;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    color: #dddddd;
+    background: transparent;
+}
+
+#workspaces button.focused {
+    background: #285577;
+    color: #ffffff;
+}
+
+#workspaces button.urgent {
+    background: #900000;
+    color: #ffffff;
+}
+
+#mode, #network, #cpu, #memory, #clock, #tray {
+    padding: 0 10px;
+}
+
+#mode {
+    background: #285577;
+}
