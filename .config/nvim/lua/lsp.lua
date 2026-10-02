@@ -104,10 +104,6 @@ vim.lsp.config("*", {
 })
 
 vim.lsp.config("gopls", {
-	-- -remote=auto: share one gopls daemon across nvim instances, auto-starting
-	-- it if absent. A literal host:port only *dials* -- it never spawns a
-	-- daemon, so gopls died with exit 2 whenever nothing was listening.
-	cmd = { "gopls", "-remote=auto" },
 	flags = {
 		debounce_text_changes = 50, -- default 150
 	},

@@ -36,16 +36,6 @@ require("lazy").setup({
 		-- Actual setup lives in lua/treesitter.lua (required below).
 	},
 	"neovim/nvim-lspconfig",
-	{
-		-- Maintained fork of ahmedkhalf/project.nvim.
-		"DrKJeff16/project.nvim",
-		lazy = false,
-		opts = {
-			-- Appended to the defaults (.git, pyproject.toml, ...).
-			patterns = { "Makefile", "package.json" },
-			show_hidden = true,
-		},
-	},
 	"hrsh7th/nvim-cmp",
 	"hrsh7th/cmp-nvim-lsp",
 	"hrsh7th/cmp-nvim-lsp-signature-help",
@@ -108,6 +98,7 @@ vim.api.nvim_set_hl(0, "PmenuBorder", { fg = "grey" })
 require("lsp")
 require("treesitter")
 require("_telescope")
+local projects = require("projects")
 
 -- Keymaps
 local map = vim.keymap.set
@@ -162,14 +153,14 @@ map("n", "<F7>", function()
 	end
 	vim.cmd.copen()
 end, { silent = true })
-map("n", "<F8>", "<cmd>Telescope projects<cr>")
+map("n", "<F8>", projects.pick)
 map("n", "<F9>", "<cmd>vertical resize -5<cr>")
 map("n", "<F10>", "<cmd>vertical resize +5<cr>")
 map("n", "<F11>", "<cmd>cnext<cr>")
 map("n", "<leader>fg", "<cmd>Telescope live_grep<cr>")
 map("n", "<leader>fb", "<cmd>Telescope buffers<cr>")
 map("n", "<leader>fh", "<cmd>Telescope help_tags<cr>")
-map("n", "<leader>fp", "<cmd>Telescope projects<cr>")
+map("n", "<leader>fp", projects.pick)
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "fugitive",
