@@ -16,19 +16,6 @@ require("lazy").setup({
 	"mattn/vim-goimports",
 	"nvim-lua/plenary.nvim",
 	{
-		dir = "/home/birdy/projects/nvim-ai",
-		name = "nvim-ai",
-		build = "go install .",
-		lazy = false,
-		config = function()
-			require('nvim-ai').setup()
-		end,
-		keys = {
-			{ "<F6>", ":AIAssistant<CR>", desc = "AI Assistant" },
-			{ "<leader>ai", ":AIAssistant<CR>", desc = "AI Assistant" },
-		},
-	},
-	{
 		"scottmckendry/cyberdream.nvim",
 		lazy = false,
 		priority = 1000,
@@ -49,78 +36,39 @@ require("lazy").setup({
 		-- Actual setup lives in lua/treesitter.lua (required below).
 	},
 	"neovim/nvim-lspconfig",
-	"hrsh7th/cmp-nvim-lsp-signature-help",
-	"folke/tokyonight.nvim",
 	{
-		"ahmedkhalf/project.nvim",
-		event = "VeryLazy",
-		config = function()
-			require("project_nvim").setup({
-				-- Recommended settings
-				detection_methods = { "pattern", "lsp" },
-				patterns = { ".git", "Makefile", "package.json", "pyproject.toml" },
-				show_hidden = true,
-			})
-			require("telescope").load_extension("projects")
-		end,
-		keys = {
-			{ "<leader>fp", "<cmd>Telescope projects<cr>", desc = "Projects" },
+		-- Maintained fork of ahmedkhalf/project.nvim.
+		"DrKJeff16/project.nvim",
+		lazy = false,
+		opts = {
+			-- Appended to the defaults (.git, pyproject.toml, ...).
+			patterns = { "Makefile", "package.json" },
+			show_hidden = true,
 		},
 	},
+	"hrsh7th/nvim-cmp",
 	"hrsh7th/cmp-nvim-lsp",
+	"hrsh7th/cmp-nvim-lsp-signature-help",
 	"hrsh7th/cmp-buffer",
 	"hrsh7th/cmp-path",
 	"hrsh7th/cmp-cmdline",
-	"hrsh7th/nvim-cmp",
 	"L3MON4D3/LuaSnip",
 	"saadparwaiz1/cmp_luasnip",
-	"sbdchd/neoformat",
 	{
 		"nvim-lualine/lualine.nvim",
-		config = function()
-			require("lualine").setup({
-				options = {
-					theme = "auto",
-					icons_enabled = true,
-					component_separators = { left = "", right = "" },
-					section_separators = { left = "", right = "" },
-					disabled_filetypes = {},
-					always_divide_middle = true,
+		opts = {
+			sections = {
+				lualine_b = { "branch", "diff" },
+				lualine_c = { { "filename", path = 1 } }, -- relative to cwd, else ~/...
+				lualine_x = {
+					function()
+						return #vim.lsp.get_clients({ bufnr = 0 }) > 0 and "LSP" or ""
+					end,
 				},
-				sections = {
-					lualine_x = {
-						function()
-							local clients = vim.lsp.get_clients({ bufnr = 0 })
-							if #clients > 0 then
-								return "LSP"
-							end
-							return ""
-						end,
-					},
-
-					lualine_b = { "branch", "diff" },
-					lualine_c = {
-						{
-							"filename",
-							path = 1, -- 1 = relative path; 2 = absolute
-							fmt = function(str)
-								local short = str:gsub(vim.env.HOME, "~")
-								return short -- gsub returns (str, count); return one value
-							end,
-						},
-					},
-				},
-			})
-		end,
+			},
+		},
 	},
 	"tpope/vim-fugitive",
-	{
-		"numToStr/Comment.nvim",
-		opts = {
-			-- add any options here
-		},
-		lazy = false,
-	},
 	{
 		"goolord/alpha-nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -129,82 +77,103 @@ require("lazy").setup({
 		end,
 	},
 	{ "nvim-telescope/telescope.nvim", branch = "master" },
-	{
-		"nvim-telescope/telescope-fzf-native.nvim",
-		build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
-	},
+	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 	{
 		"nvim-telescope/telescope-file-browser.nvim",
 		dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
 	},
 })
 
-vim.cmd([[set tabstop=2]])
-vim.cmd([[set shiftwidth=2]])
-vim.cmd([[colorscheme cyberdream]])
+-- Options
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+vim.opt.number = true
+vim.opt.signcolumn = "no"
+vim.opt.mouse = ""
+vim.opt.updatetime = 100
+vim.opt.undofile = true
+vim.opt.clipboard:append("unnamedplus")
+vim.opt.shada = "!,'20,<50,s10,h" -- limit oldfiles to prevent hangs
 
--- Automatically use correct indentation when pressing i on empty line
-vim.cmd([[function! IndentWithI()
-    if len(getline('.')) == 0
-        return "\"_cc"
-    else
-        return "i"
-    endif
-endfunction
-nnoremap <expr> i IndentWithI()]])
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldtext = "" -- the folded line itself, highlighted
+vim.opt.foldlevel = 99
+
+vim.cmd.colorscheme("cyberdream")
+vim.cmd.highlight("Pmenu guibg=NONE")
+vim.api.nvim_set_hl(0, "PmenuBorder", { fg = "grey" })
 
 require("lsp")
 require("treesitter")
 require("_telescope")
 
-vim.cmd([[set undodir=~/.vim/undodir]])
-vim.cmd([[set undofile]])
-vim.cmd([[set clipboard+=unnamedplus]])
+-- Keymaps
+local map = vim.keymap.set
+local builtin = require("telescope.builtin")
 
--- Limit oldfiles to prevent hangs
-vim.o.shada = "!,'20,<50,s10,h"
+local function git_root()
+	local root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+	return vim.v.shell_error == 0 and root or nil
+end
 
--- Hotkeys
-vim.cmd([[nnoremap <F10> <cmd>vertical resize +5<cr>]])
-vim.cmd([[nnoremap <F11> <cmd>cnext<cr>]])
-vim.cmd([[nnoremap <F9> <cmd>vertical resize -5<cr>]])
-vim.cmd([[nnoremap <F2> <cmd>Telescope oldfiles<cr>]])
-vim.keymap.set("n", "<F1>", ":Telescope file_browser path=%:p:h select_buffer=true<CR>")
-vim.cmd([[command! Filez execute (len(system('git rev-parse'))) ? ':Telescope find_files' : ':Telescope git_files']])
-vim.cmd([[map <F3> :Filez<CR>]])
-vim.cmd([[map <F8> :Telescope projects<CR>]])
-vim.cmd(
-	[[nnoremap <F4> <cmd>lua require('telescope.builtin').lsp_document_symbols({fname_width = 160,show_line=false,symbol_width=70})<cr>]]
-)
-vim.cmd(
-	[[nnoremap <F5> <cmd>lua require('telescope.builtin').live_grep{ file_ignore_patterns = {"node_modules/", ".git/", ".cache", "%.o", "%.a", "%.out", "%.class", "%.pdf", "%.mkv", "%.mp4", "%.zip"}, cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1] }<cr>]]
-)
-vim.cmd([[nnoremap <leader>fg <cmd>Telescope live_grep<cr>]])
-vim.cmd([[nnoremap <leader>fb <cmd>Telescope buffers<cr>]])
-vim.cmd([[nnoremap <leader>fh <cmd>Telescope help_tags<cr>]])
+-- `i` on an empty line starts at the correct indentation.
+map("n", "i", function()
+	return vim.fn.getline(".") == "" and '"_cc' or "i"
+end, { expr = true })
 
-vim.cmd([[set number]])
-vim.cmd([[set expandtab]])
-vim.cmd([[autocmd FileType fugitive nmap <buffer> q gq]])
-vim.cmd("highlight Pmenu guibg=NONE")
-vim.api.nvim_set_hl(0, "PmenuBorder", { fg = "grey" })
-vim.cmd([[nnoremap <silent> g? <cmd>lua vim.diagnostic.open_float()<CR>]])
-vim.cmd([[set updatetime=100]])
-vim.cmd([[
-function! ToggleQuickFix()
-    if empty(filter(getwininfo(), 'v:val.quickfix'))
-        copen
-    else
-        cclose
-    endif
-endfunction
-]])
-vim.cmd([[nnoremap <silent> <F7> :call ToggleQuickFix()<cr>]])
-vim.cmd([[set signcolumn=no]])
-vim.opt.mouse = ""
+map("n", "<F1>", ":Telescope file_browser path=%:p:h select_buffer=true<CR>")
+map("n", "<F2>", "<cmd>Telescope oldfiles<cr>")
+map("n", "<F3>", function()
+	if git_root() then
+		builtin.git_files()
+	else
+		builtin.find_files()
+	end
+end)
+map("n", "<F4>", function()
+	builtin.lsp_document_symbols({ fname_width = 160, show_line = false, symbol_width = 70 })
+end)
+map("n", "<F5>", function()
+	builtin.live_grep({
+		file_ignore_patterns = {
+			"node_modules/",
+			".git/",
+			".cache",
+			"%.o",
+			"%.a",
+			"%.out",
+			"%.class",
+			"%.pdf",
+			"%.mkv",
+			"%.mp4",
+			"%.zip",
+		},
+		cwd = git_root(),
+	})
+end)
+map("n", "<F7>", function()
+	for _, win in ipairs(vim.fn.getwininfo()) do
+		if win.quickfix == 1 then
+			vim.cmd.cclose()
+			return
+		end
+	end
+	vim.cmd.copen()
+end, { silent = true })
+map("n", "<F8>", "<cmd>Telescope projects<cr>")
+map("n", "<F9>", "<cmd>vertical resize -5<cr>")
+map("n", "<F10>", "<cmd>vertical resize +5<cr>")
+map("n", "<F11>", "<cmd>cnext<cr>")
+map("n", "<leader>fg", "<cmd>Telescope live_grep<cr>")
+map("n", "<leader>fb", "<cmd>Telescope buffers<cr>")
+map("n", "<leader>fh", "<cmd>Telescope help_tags<cr>")
+map("n", "<leader>fp", "<cmd>Telescope projects<cr>")
 
-vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.cmd([[set foldmethod=expr]])
-vim.opt.foldlevel = 99
-
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "fugitive",
+	callback = function(ev)
+		map("n", "q", "gq", { buffer = ev.buf, remap = true })
+	end,
+})
